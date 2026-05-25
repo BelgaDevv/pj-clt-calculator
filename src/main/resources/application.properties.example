@@ -1,8 +1,8 @@
 spring.application.name=pj-clt-calculator
 
 spring.datasource.url=jdbc:postgresql://localhost:5432/pj_clt_db
-spring.datasource.username=postgres
-spring.datasource.password=123456789
+spring.datasource.username=user
+spring.datasource.password=password
 
 # JPA
 spring.jpa.hibernate.ddl-auto=update
