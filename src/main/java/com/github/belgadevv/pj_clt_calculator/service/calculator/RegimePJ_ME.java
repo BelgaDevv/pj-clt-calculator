@@ -35,9 +35,5 @@ public class RegimePJ_ME extends ModalidadeTrabalhista {
         return impostoSimplesNacional + inssProLabore;
     }
 
-    @Override
-    public double calcularProvisoes(double faturamentoBruto) {
-        // ME também não tem provisões automáticas de CLT.
-        return 0.0;
-    }
+
 }

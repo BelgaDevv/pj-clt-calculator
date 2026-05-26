@@ -6,26 +6,47 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-// @RestControllerAdvice intercepta exceções lançadas em qualquer controller da aplicação
-// Centraliza o tratamento de erros evitando try/catch repetido em cada controller
+// Intercepts exceptions across all controllers to centralize error handling
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // @ExceptionHandler define qual tipo de exceção esse método trata
-    // MethodArgumentNotValidException é lançada pelo Spring quando
-    // uma validação do @Valid falha antes de entrar no método do controller
+    // Handles Spring validation errors triggered by @Valid in DTOs
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationErrors(MethodArgumentNotValidException e) {
-
-        // Percorre os erros de campo e retorna a primeira mensagem encontrada
-        // as mensagens foram definidas nas anotações @NotBlank e @Size dos DTOs
         String mensagem = e.getBindingResult().getFieldErrors()
                 .stream()
                 .map(error -> error.getDefaultMessage())
                 .findFirst()
-                .orElse("Dados inválidos!");
+                .orElse("Invalid data!");
 
-        // Retorna 400 Bad Request com a mensagem de validação
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem);
+    }
+
+    // Handles business logic exceptions thrown by Services
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeExceptions(RuntimeException e) {
+        String msg = e.getMessage();
+
+        if (msg != null) {
+            String lowerMsg = msg.toLowerCase();
+
+            // 409 Conflict: CPF/Email already in use, or passwords don't match
+            if (lowerMsg.contains("already in use") || lowerMsg.contains("don't match") || lowerMsg.contains("já cadastrado")) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(msg);
+            }
+
+            // 401 Unauthorized: Incorrect password, invalid credentials
+            if (lowerMsg.contains("incorrect") || lowerMsg.contains("unauthorized") || lowerMsg.contains("inválida")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(msg);
+            }
+
+            // 404 Not Found: User or resource not found
+            if (lowerMsg.contains("not found") || lowerMsg.contains("não encontrado")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+            }
+        }
+
+        // 400 Bad Request: Generic fallback for other business errors
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(msg);
     }
 }

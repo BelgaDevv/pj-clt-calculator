@@ -14,10 +14,4 @@ public class RegimePJ_MEI extends ModalidadeTrabalhista {
         return VALOR_FIXO_DAS;
     }
 
-    @Override
-    public double calcularProvisoes(double faturamentoBruto) {
-        // MEI por padrão legal não tem provisão (férias/13º embutidos).
-        // Retorna 0, pois cabe ao PJ provisionar por conta própria no cálculo final do líquido.
-        return 0.0;
-    }
 }
