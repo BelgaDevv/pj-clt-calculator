@@ -1,10 +1,6 @@
 package com.github.belgadevv.pj_clt_calculator.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,15 +16,30 @@ public class SimulationResponseDTO {
     // Timestamp of when the simulation was processed
     private LocalDateTime dataSimulacao;
 
-    // ── INPUTS ─────────────────────────────────────────────────────────
+    // Simulation path: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
+    private String direcao;
 
+    // Chosen tax regime: "MEI" or "ME"
     private String regimePjEscolhido;
-    private double salarioDesejadoClt;
+
+    // ── SIMULATION PARAMETERS (Inputs / Calculated Values depending on Direction) ──
+
+    // CLT salary (Input for CLT_PARA_PJ / Calculated output for PJ_PARA_CLT)
+    private Double salarioDesejadoClt;
+
     private double valeAlimentacao;
     private double valeTransporte;
+
+    // Pro-labore percentage (ME only)
     private Double proLaborePercentual;
 
-    // ── RESULTS ────────────────────────────────────────────────────────
+    // Gross revenue (Input for PJ_PARA_CLT / Calculated output for CLT_PARA_PJ and META_PARA_PJ)
+    private Double faturamentoBrutoPj;
+
+    // Target net margin (Input strictly for META_PARA_PJ)
+    private Double margemDesejada;
+
+    // ── CALCULATION OUTPUTS ────────────────────────────────────────────────────────
 
     // Total calculated PJ taxes
     private double impostoPj;
@@ -39,9 +50,6 @@ public class SimulationResponseDTO {
     // Monthly provisions the professional should reserve to simulate CLT benefits
     private double provisoesSimuladasPj;
 
-    // Required monthly gross revenue (Main output)
-    private double faturamentoBrutoPj;
-
-    // Available net margin left for investment/personal draw
+    // Net margin left after deducting taxes and provisions from gross revenue
     private double margemDisponivel;
 }

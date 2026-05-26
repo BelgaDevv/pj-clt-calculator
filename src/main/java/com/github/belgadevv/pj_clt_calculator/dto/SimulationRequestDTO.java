@@ -2,12 +2,7 @@ package com.github.belgadevv.pj_clt_calculator.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import java.util.UUID;
 
 @Getter
@@ -20,14 +15,16 @@ public class SimulationRequestDTO {
     @NotNull(message = "User ID is required!")
     private UUID userId;
 
+    // Simulation path: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
+    @NotBlank(message = "Simulation direction is required!")
+    private String direcao;
+
     // Chosen tax regime: "MEI" or "ME"
     @NotBlank(message = "Tax regime is required!")
     private String regimePjEscolhido;
 
-    // Desired CLT salary to match as PJ
-    @NotNull(message = "Desired salary is required!")
-    @Positive(message = "Desired salary must be greater than zero!")
-    private double salarioDesejadoClt;
+    // Input strictly for CLT_PARA_PJ (nullable for other paths)
+    private Double salarioDesejadoClt;
 
     // Optional benefits (defaults to 0 if not provided)
     private double valeAlimentacao;
@@ -35,4 +32,10 @@ public class SimulationRequestDTO {
 
     // Pro-labore percentage (required for ME, nullable for MEI)
     private Double proLaborePercentual;
+
+    // Input strictly for PJ_PARA_CLT (nullable for other paths)
+    private Double faturamentoBrutoPj;
+
+    // Input target value strictly for META_PARA_PJ simulations
+    private Double margemDesejada;
 }
