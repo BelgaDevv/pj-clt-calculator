@@ -1,4 +1,4 @@
-package com.github.belgadevv.pj_clt_calculator.domain.entity;
+package com.github.belgadevv.pj_clt_calculator.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -23,8 +23,6 @@ import java.util.UUID;
 public class User {
 
 
-    // @GeneratedValue(UUID) delega ao Spring a geração automática do UUID antes do INSERT
-    // @Column(name = "id") mapeia para a coluna "id" no banco
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
@@ -33,7 +31,7 @@ public class User {
     @Column(unique = true, nullable = false, length = 11)
     private String cpf;
 
-    // name = "password_hash" mapeia para a coluna com esse nome no banco
+
     @Column(name = "password_hash", nullable = false)
     private String senhacrip;
 }
