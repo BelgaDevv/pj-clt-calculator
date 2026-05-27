@@ -24,13 +24,8 @@ public class ProjectionController {
      * POST /api/projections
      */
     @PostMapping
-    public ResponseEntity<?> projetar(@RequestBody @Valid ProjectionRequestDTO dto) {
-        try {
-            ProjectionResponseDTO response = projectionService.projetar(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ProjectionResponseDTO> projetar(@RequestBody @Valid ProjectionRequestDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectionService.projetar(dto));
     }
 
     /**
@@ -38,12 +33,7 @@ public class ProjectionController {
      * GET /api/projections/history/{userId}
      */
     @GetMapping("/history/{userId}")
-    public ResponseEntity<?> buscarHistorico(@PathVariable UUID userId) {
-        try {
-            List<ProjectionResponseDTO> historico = projectionService.buscarHistorico(userId);
-            return ResponseEntity.ok(historico);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<List<ProjectionResponseDTO>> buscarHistorico(@PathVariable UUID userId) {
+        return ResponseEntity.ok(projectionService.buscarHistorico(userId));
     }
 }

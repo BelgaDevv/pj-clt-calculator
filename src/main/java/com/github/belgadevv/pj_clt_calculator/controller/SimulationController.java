@@ -22,7 +22,6 @@ public class SimulationController {
     // Performs a new equivalence simulation and saves it to history
     @PostMapping
     public ResponseEntity<SimulationResponseDTO> simular(@RequestBody @Valid SimulationRequestDTO dto) {
-        // No try/catch needed. If an error occurs, GlobalExceptionHandler catches it!
         SimulationResponseDTO response = simulationService.simular(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -30,7 +29,6 @@ public class SimulationController {
     // Retrieves the complete simulation history for a specific user
     @GetMapping("/history/{userId}")
     public ResponseEntity<List<SimulationResponseDTO>> buscarHistorico(@PathVariable UUID userId) {
-        // Clean and straightforward
         List<SimulationResponseDTO> historico = simulationService.buscarHistorico(userId);
         return ResponseEntity.ok(historico);
     }

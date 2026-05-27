@@ -4,6 +4,9 @@ import com.github.belgadevv.pj_clt_calculator.dto.SimulationRequestDTO;
 import com.github.belgadevv.pj_clt_calculator.dto.SimulationResponseDTO;
 import com.github.belgadevv.pj_clt_calculator.entity.Simulation;
 import com.github.belgadevv.pj_clt_calculator.entity.User;
+import com.github.belgadevv.pj_clt_calculator.exception.InvalidRegimeException;
+import com.github.belgadevv.pj_clt_calculator.exception.InvalidSimulationException;
+import com.github.belgadevv.pj_clt_calculator.exception.UserNotFoundException;
 import com.github.belgadevv.pj_clt_calculator.repository.SimulationRepository;
 import com.github.belgadevv.pj_clt_calculator.repository.UserRepository;
 import com.github.belgadevv.pj_clt_calculator.service.calculator.ModalidadeTrabalhista;
@@ -30,7 +33,7 @@ public class SimulationService {
 
         // 1. Fetch user by ID
         User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
 
         // 2. Select the appropriate tax regime strategy
         ModalidadeTrabalhista regime = selecionarRegime(dto.getRegimePjEscolhido());
@@ -40,7 +43,7 @@ public class SimulationService {
             case "CLT_PARA_PJ" -> calcularCltParaPj(dto, user, regime);
             case "PJ_PARA_CLT" -> calcularPjParaClt(dto, user, regime);
             case "META_PARA_PJ" -> calcularMetaParaPj(dto, user, regime);
-            default -> throw new RuntimeException("Invalid direction! Use CLT_PARA_PJ, PJ_PARA_CLT or META_PARA_PJ.");
+            default -> throw new InvalidSimulationException("Invalid direction! Use CLT_PARA_PJ, PJ_PARA_CLT or META_PARA_PJ.");
         };
 
         // 4. Save to historical records and return the payload mapping
@@ -52,7 +55,7 @@ public class SimulationService {
     private Simulation calcularCltParaPj(SimulationRequestDTO dto, User user, ModalidadeTrabalhista regime) {
 
         if (dto.getSalarioDesejadoClt() == null || dto.getSalarioDesejadoClt() <= 0) {
-            throw new RuntimeException("Desired CLT salary is required for this calculation path!");
+            throw new InvalidSimulationException("Desired CLT salary is required for this calculation path!");
         }
 
         double baseEntrada = dto.getSalarioDesejadoClt()
@@ -80,7 +83,7 @@ public class SimulationService {
     private Simulation calcularPjParaClt(SimulationRequestDTO dto, User user, ModalidadeTrabalhista regime) {
 
         if (dto.getFaturamentoBrutoPj() == null || dto.getFaturamentoBrutoPj() <= 0) {
-            throw new RuntimeException("PJ Gross revenue is required for this calculation path!");
+            throw new InvalidSimulationException("PJ Gross revenue is required for this calculation path!");
         }
 
         double faturamentoBruto = dto.getFaturamentoBrutoPj();
@@ -101,7 +104,7 @@ public class SimulationService {
     private Simulation calcularMetaParaPj(SimulationRequestDTO dto, User user, ModalidadeTrabalhista regime) {
 
         if (dto.getMargemDesejada() == null || dto.getMargemDesejada() <= 0) {
-            throw new RuntimeException("Target net margin is required for this calculation path!");
+            throw new InvalidSimulationException("Target net margin is required for this calculation path!");
         }
 
         // Iterative feedback loop calculating backward from net pocket margin target
@@ -160,7 +163,7 @@ public class SimulationService {
     // Retransmits simulation logs tied specifically to a customer profile
     public List<SimulationResponseDTO> buscarHistorico(UUID userId) {
         userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new UserNotFoundException("User not found!"));
         return simulationRepository.findByUserId(userId)
                 .stream()
                 .map(this::mapearParaDTO)
@@ -172,7 +175,7 @@ public class SimulationService {
         return switch (regime.toUpperCase()) {
             case "MEI" -> regimePJ_MEI;
             case "ME" -> regimePJ_ME;
-            default -> throw new RuntimeException("Invalid regime choice! Use MEI or ME.");
+            default -> throw new InvalidRegimeException("Invalid regime choice! Use MEI or ME.");
         };
     }
 

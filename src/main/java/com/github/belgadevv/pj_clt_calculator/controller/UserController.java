@@ -22,7 +22,6 @@ public class UserController {
     // Register Method
     @PostMapping("/register")
     public ResponseEntity<String> cadastrar(@RequestBody @Valid UserRegistrationDTO dto) {
-        // Errors like "CPF já cadastrado" will be automatically caught and sent as 409 Conflict
         userService.cadastrarUsuario(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
     }
@@ -30,7 +29,6 @@ public class UserController {
     // Login Method
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid UserLoginDTO dto) {
-        // Authentication failures will be automatically caught and sent as 401 Unauthorized
         userService.autenticar(dto);
         return ResponseEntity.ok("Login realizado com sucesso!");
     }
