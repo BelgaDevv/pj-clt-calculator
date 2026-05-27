@@ -5,19 +5,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegimePJ_ME extends ModalidadeTrabalhista {
 
-    private final double ALIQUOTA_ANEXO_III = 0.06; // 6%
-    private final double ALIQUOTA_ANEXO_V = 0.155;  // 15.5%
-    private final double PERCENTUAL_PRO_LABORE = 0.28; // 28% para atingir o Fator R
+    // Simples Nacional tax rates for micro-enterprises (ME)
+    private final double ALIQUOTA_ANEXO_III = 0.06;   // 6% (Lower rate if Factor R is met)
+    private final double ALIQUOTA_ANEXO_V = 0.155;    // 15.5% (Default rate if Factor R is not met)
+    private final double PERCENTUAL_PRO_LABORE = 0.28; // 28% mandatory payroll-to-revenue ratio to trigger Factor R
 
+    /**
+     * Calculates the "Fator R" logic.
+     * If the company's payroll costs (pro-labore) represent 28% or more of its gross revenue,
+     * the company qualifies for the lower tax bracket (Anexo III).
+     */
     public boolean calcularFatorR(double faturamentoBruto, double proLabore) {
         if (faturamentoBruto == 0) return false;
-        // Se a razão entre o pro-labore e o faturamento for maior ou igual a 28%, cai no Anexo III
         return (proLabore / faturamentoBruto) >= PERCENTUAL_PRO_LABORE;
     }
 
     @Override
     public double calcularImpostos(double faturamentoBruto) {
-        // Simulando a estratégia ideal: Forçamos o pró-labore em 28% para pagar menos imposto (Anexo III)
+        // Optimizing corporate tax: Automatically simulation assumes 28% pro-labore allocation to trigger Anexo III
         double proLaboreSugerido = faturamentoBruto * PERCENTUAL_PRO_LABORE;
 
         boolean enquadraAnexoIII = calcularFatorR(faturamentoBruto, proLaboreSugerido);
@@ -29,11 +34,9 @@ public class RegimePJ_ME extends ModalidadeTrabalhista {
             impostoSimplesNacional = faturamentoBruto * ALIQUOTA_ANEXO_V;
         }
 
-        // Além do Simples, o pró-labore sofre desconto de INSS (11%)
+        // Apart from corporate Simples Nacional, the pro-labore withdrawal triggers an individual 11% INSS tax
         double inssProLabore = proLaboreSugerido * 0.11;
 
         return impostoSimplesNacional + inssProLabore;
     }
-
-
 }

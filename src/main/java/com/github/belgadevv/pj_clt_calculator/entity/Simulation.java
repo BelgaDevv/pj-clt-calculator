@@ -25,54 +25,54 @@ public class Simulation {
     @Column(name = "data_simulacao", nullable = false)
     private LocalDateTime dataSimulacao;
 
-    // Direção da simulação escolhida pelo usuário
-    // CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
+    // Simulation target direction: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
     @Column(name = "direcao", nullable = false, length = 15)
     private String direcao;
 
-    // ── ENTRADAS ─────────────────────────────────────────────────────────
+    // ── SIMULATION PARAMETERS (INPUTS) ───────────────────────────────────
 
-    // Regime tributário escolhido: "MEI" ou "ME"
+    // Chosen tax regime: "MEI" or "ME"
     @Column(name = "regime_pj_escolhido", nullable = false, length = 3)
     private String regimePjEscolhido;
 
-    // Salário CLT desejado — entrada na direção CLT_PARA_PJ
-    // Resultado na direção PJ_PARA_CLT
+    // CLT salary (Input for CLT_PARA_PJ / Calculated output for PJ_PARA_CLT)
     @Column(name = "salario_desejado_clt")
     private Double salarioDesejadoClt;
 
-    // Benefícios opcionais
+    // Optional benefits (defaults to 0 if not provided)
     @Column(name = "vale_alimentacao")
     private double valeAlimentacao;
 
     @Column(name = "vale_transporte")
     private double valeTransporte;
 
-    // Percentual de pró-labore — apenas para ME
+    // Pro-labore percentage (Strictly for ME regimes)
     @Column(name = "pro_labore_percentual")
     private Double proLaborePercentual;
 
-    // Faturamento bruto informado pelo usuário — entrada na direção PJ_PARA_CLT
-    // Resultado nas direções CLT_PARA_PJ e META_PARA_PJ
+    // PJ Gross revenue (Input for PJ_PARA_CLT / Calculated output for other paths)
     @Column(name = "faturamento_bruto_pj")
     private Double faturamentoBrutoPj;
 
-    // Margem líquida desejada — entrada na direção META_PARA_PJ
+    // Target net margin pocket value (Input strictly for META_PARA_PJ)
     @Column(name = "margem_desejada")
     private Double margemDesejada;
 
-    // ── RESULTADOS ────────────────────────────────────────────────────────
+    // ── CALCULATION OUTPUTS (RESULTS) ────────────────────────────────────
 
+    // Total calculated PJ taxes
     @Column(name = "imposto_pj")
     private double impostoPj;
 
-    // Anexo aplicado — apenas para ME
+    // Applied Simples Nacional split tier (Strictly for ME regimes)
     @Column(name = "anexo_aplicado_me", length = 3)
     private String anexoAplicadoMe;
 
+    // Monthly provisions the professional should reserve to simulate CLT benefits
     @Column(name = "provisoes_simuladas_pj")
     private double provisoesSimuladasPj;
 
+    // Net margin left over after deducting taxes and provisions from gross revenue
     @Column(name = "margem_disponivel")
     private double margemDisponivel;
 }
