@@ -9,5 +9,7 @@ import java.util.UUID;
 public interface SimulationRepository extends JpaRepository<Simulation, UUID> {
 
     // search all simulations by user id
-    List<Simulation> findByUserId(UUID userId);
+  List<Simulation> findByUserIdOrderByDataSimulacaoDesc(UUID userId);
+
+  long countByUserId(UUID userId);
 }

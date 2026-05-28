@@ -62,9 +62,13 @@ public class GlobalExceptionHandler {
     }
 
     // 500 - Unexpected errors
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGenericError(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Internal server error. Please try again later.");
-    }
+@ExceptionHandler(Exception.class)
+public ResponseEntity handleGenericError(Exception e) {
+
+e.printStackTrace();
+
+return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(e.getMessage());
+
+}
 }

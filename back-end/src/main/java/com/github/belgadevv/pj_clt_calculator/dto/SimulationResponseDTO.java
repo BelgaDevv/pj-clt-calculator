@@ -16,6 +16,8 @@ public class SimulationResponseDTO {
     // Timestamp of when the simulation was processed
     private LocalDateTime dataSimulacao;
 
+    private String descricao;
+
     // Simulation path: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
     private String direcao;
 

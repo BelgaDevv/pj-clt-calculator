@@ -11,7 +11,11 @@ import java.util.UUID;
 public class ProjectionResponseDTO {
 
     private UUID id;
+    
     private LocalDateTime dataProjecao;
+
+    private String descricao;
+
     private String direcao;
 
     // ── PROJECTION PARAMETERS (INPUTS) ───────────────────────────────────

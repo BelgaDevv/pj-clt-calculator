@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.github.belgadevv.pj_clt_calculator.dto.UserResponseDTO;
 
 @RestController
 @RequestMapping("/api/users")
@@ -20,16 +21,27 @@ public class UserController {
     private final UserService userService;
 
     // Register Method
-    @PostMapping("/register")
-    public ResponseEntity<String> cadastrar(@RequestBody @Valid UserRegistrationDTO dto) {
-        userService.cadastrarUsuario(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
-    }
+  @PostMapping("/register")
+public ResponseEntity<UserResponseDTO> cadastrar(
+        @RequestBody @Valid UserRegistrationDTO dto
+) {
+
+    UserResponseDTO response =
+            userService.cadastrarUsuario(dto);
+
+    return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(response);
+}
 
     // Login Method
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid UserLoginDTO dto) {
-        userService.autenticar(dto);
-        return ResponseEntity.ok("Login realizado com sucesso!");
-    }
+  @PostMapping("/login")
+public ResponseEntity<UserResponseDTO> login(
+        @RequestBody @Valid UserLoginDTO dto
+) {
+
+    UserResponseDTO response = userService.autenticar(dto);
+
+    return ResponseEntity.ok(response);
+}
 }

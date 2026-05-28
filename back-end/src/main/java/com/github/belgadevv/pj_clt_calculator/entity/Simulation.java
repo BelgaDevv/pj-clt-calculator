@@ -25,6 +25,10 @@ public class Simulation {
     @Column(name = "data_simulacao", nullable = false)
     private LocalDateTime dataSimulacao;
 
+    //description
+    @Column(nullable = false)
+    private String descricao;
+
     // Simulation target direction: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
     @Column(name = "direcao", nullable = false, length = 15)
     private String direcao;

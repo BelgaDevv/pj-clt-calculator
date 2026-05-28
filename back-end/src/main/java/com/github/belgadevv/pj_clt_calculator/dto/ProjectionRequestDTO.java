@@ -19,6 +19,8 @@ public class ProjectionRequestDTO {
     @NotBlank(message = "Projection direction is required!")
     private String direcao;
 
+    private String descricao;
+
     // Investment timeline duration in years (Mandatory for both calculation paths)
     @NotNull(message = "The timeframe in years is required!")
     @Positive(message = "The timeframe must be a positive number greater than zero!")

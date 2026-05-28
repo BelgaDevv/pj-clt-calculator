@@ -26,6 +26,10 @@ public class Projection {
     @Column(name = "data_projecao", nullable = false)
     private LocalDateTime dataProjecao;
 
+    //description
+    @Column(nullable = false)
+private String descricao;
+
     // Projection path direction: "NORMAL" or "INVERSA"
     @Column(name = "direcao", nullable = false, length = 10)
     private String direcao;

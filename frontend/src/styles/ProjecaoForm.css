@@ -1,0 +1,164 @@
+.projecao-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-titulo-projecao {
+  flex: 1;
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+}
+
+.btn-salvar-projecao {
+  background-color: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-salvar-projecao:hover {
+  background-color: #059669;
+}
+
+.projecao-grid-operacional {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 100%;
+}
+
+.grid-dois-campos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.alerta-taxa-real {
+  background-color: #0f172a;
+  border-left: 4px solid #38bdf8;
+  padding: 12px;
+  border-radius: 0 8px 8px 0;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.alerta-taxa-real strong {
+  color: #38bdf8;
+}
+
+.bloco-saida-linha.principal-projecao {
+  background-color: #0f172a;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #10b981;
+  margin-bottom: 15px;
+}
+
+.bloco-saida-linha.principal-projecao .destacado-projecao {
+  color: #10b981;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.valor-investido { color: #38bdf8; }
+.valor-juros { color: #f59e0b; }
+
+/* FIX DO GRÁFICO HORIZONTAL COM PORCENTAGENS NAS PONTAS */
+.grafico-horizontal-projecao {
+  margin-top: auto;
+  padding-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.linha-barra-horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label-com-porcentagem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.legenda-barra {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.pct-legenda {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.text-investido { color: #38bdf8; }
+.text-juros { color: #f59e0b; }
+
+.progresso-container-barra {
+  background-color: #0f172a;
+  height: 12px;
+  border-radius: 6px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.barra-preenchida {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s ease-out; /* Suaviza a barra mexendo reativamente */
+}
+
+.barra-preenchida.investido { background-color: #38bdf8; }
+.barra-preenchida.juros { background-color: #f59e0b; }
+
+/* ===================================================
+   BOTÃO DE CALCULAR E ERROS (ADICIONADO)
+   =================================================== */
+.btn-calcular {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #38bdf8;
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-calcular:hover {
+  background-color: #7dd3fc;
+}
+
+.btn-calcular:disabled {
+  background-color: #334155;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.erro-inline {
+  background-color: #450a0a;
+  color: #fca5a5;
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}

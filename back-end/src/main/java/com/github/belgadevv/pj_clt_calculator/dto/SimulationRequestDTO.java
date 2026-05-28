@@ -15,6 +15,8 @@ public class SimulationRequestDTO {
     @NotNull(message = "User ID is required!")
     private UUID userId;
 
+    private String descricao;
+
     // Simulation path: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
     @NotBlank(message = "Simulation direction is required!")
     private String direcao;

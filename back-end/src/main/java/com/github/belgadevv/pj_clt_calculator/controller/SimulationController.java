@@ -19,17 +19,45 @@ public class SimulationController {
 
     private final SimulationService simulationService;
 
-    // Performs a new equivalence simulation and saves it to history
-    @PostMapping
-    public ResponseEntity<SimulationResponseDTO> simular(@RequestBody @Valid SimulationRequestDTO dto) {
-        SimulationResponseDTO response = simulationService.simular(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    // ==========================================
+    // CÁLCULO REATIVO (NÃO SALVA)
+    // ==========================================
+    @PostMapping("/calculate")
+    public ResponseEntity<SimulationResponseDTO> calcular(
+            @RequestBody @Valid SimulationRequestDTO dto
+    ) {
+
+        SimulationResponseDTO response = simulationService.calcular(dto);
+
+        return ResponseEntity.ok(response);
     }
 
-    // Retrieves the complete simulation history for a specific user
+    // ==========================================
+    // SALVAR NO HISTÓRICO
+    // ==========================================
+    @PostMapping("/save")
+    public ResponseEntity<SimulationResponseDTO> salvar(
+            @RequestBody @Valid SimulationRequestDTO dto
+    ) {
+
+        SimulationResponseDTO response = simulationService.salvar(dto);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+    // ==========================================
+    // HISTÓRICO
+    // ==========================================
     @GetMapping("/history/{userId}")
-    public ResponseEntity<List<SimulationResponseDTO>> buscarHistorico(@PathVariable UUID userId) {
-        List<SimulationResponseDTO> historico = simulationService.buscarHistorico(userId);
+    public ResponseEntity<List<SimulationResponseDTO>> buscarHistorico(
+            @PathVariable UUID userId
+    ) {
+
+        List<SimulationResponseDTO> historico =
+                simulationService.buscarHistorico(userId);
+
         return ResponseEntity.ok(historico);
     }
 }
