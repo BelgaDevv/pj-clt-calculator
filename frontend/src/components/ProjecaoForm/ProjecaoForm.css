@@ -1,3 +1,4 @@
+/* --- PROJECTION MAIN CONTAINER --- */
 .projecao-container {
   width: 100%;
   max-width: 1200px;
@@ -7,6 +8,7 @@
   gap: 20px;
 }
 
+/* --- HEADER INPUT & BUTTONS --- */
 .input-titulo-projecao {
   flex: 1;
   background-color: #0f172a;
@@ -33,6 +35,7 @@
   background-color: #059669;
 }
 
+/* --- LAYOUT GRID --- */
 .projecao-grid-operacional {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -46,6 +49,7 @@
   gap: 14px;
 }
 
+/* --- ALERTS & NOTIFICATIONS --- */
 .alerta-taxa-real {
   background-color: #0f172a;
   border-left: 4px solid #38bdf8;
@@ -59,6 +63,7 @@
   color: #38bdf8;
 }
 
+/* --- OUTPUT DISPLAY BLOCKS --- */
 .bloco-saida-linha.principal-projecao {
   background-color: #0f172a;
   padding: 16px;
@@ -76,7 +81,7 @@
 .valor-investido { color: #38bdf8; }
 .valor-juros { color: #f59e0b; }
 
-/* FIX DO GRÁFICO HORIZONTAL COM PORCENTAGENS NAS PONTAS */
+/* --- HORIZONTAL BAR GRAPH OVERLAYS --- */
 .grafico-horizontal-projecao {
   margin-top: auto;
   padding-top: 25px;
@@ -106,9 +111,11 @@
   font-size: 0.85rem;
   font-weight: 700;
 }
+
 .text-investido { color: #38bdf8; }
 .text-juros { color: #f59e0b; }
 
+/* --- PROGRESS TRACK CONTY --- */
 .progresso-container-barra {
   background-color: #0f172a;
   height: 12px;
@@ -120,15 +127,13 @@
 .barra-preenchida {
   height: 100%;
   border-radius: 6px;
-  transition: width 0.3s ease-out; /* Suaviza a barra mexendo reativamente */
+  transition: width 0.3s ease-out; /* Smooth reactive transitions */
 }
 
 .barra-preenchida.investido { background-color: #38bdf8; }
 .barra-preenchida.juros { background-color: #f59e0b; }
 
-/* ===================================================
-   BOTÃO DE CALCULAR E ERROS (ADICIONADO)
-   =================================================== */
+/* --- CALCULATION BUTTONS & ACTIONS --- */
 .btn-calcular {
   width: 100%;
   margin-top: 16px;
@@ -153,6 +158,7 @@
   cursor: not-allowed;
 }
 
+/* --- ERROR LAYOUT WRAPPER --- */
 .erro-inline {
   background-color: #450a0a;
   color: #fca5a5;

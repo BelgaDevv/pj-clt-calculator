@@ -18,6 +18,8 @@ public class ProjectionResponseDTO {
 
     private String direcao;
 
+    private Boolean fixado;
+
     // ── PROJECTION PARAMETERS (INPUTS) ───────────────────────────────────
 
     private Double aporteMensal;

@@ -33,6 +33,9 @@ public class Simulation {
     @Column(name = "direcao", nullable = false, length = 15)
     private String direcao;
 
+    @Column(name = "fixado", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+private Boolean fixado = false;
+
     // ── SIMULATION PARAMETERS (INPUTS) ───────────────────────────────────
 
     // Chosen tax regime: "MEI" or "ME"

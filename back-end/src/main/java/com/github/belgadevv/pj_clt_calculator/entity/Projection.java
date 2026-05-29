@@ -34,6 +34,9 @@ private String descricao;
     @Column(name = "direcao", nullable = false, length = 10)
     private String direcao;
 
+    @Column(name = "fixado", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+private Boolean fixado = false;
+
     // ── PROJECTION PARAMETERS (INPUTS) ───────────────────────────────────
 
     // Monthly investment contribution (Input for NORMAL flow / Output for INVERSA flow)

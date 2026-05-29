@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface ProjectionRepository extends JpaRepository<Projection, UUID> {
 
     // Retrieves the complete projection historical logs associated with a specific User ID
-   List<Projection> findByUserIdOrderByDataProjecaoDesc(UUID userId);
+ List<Projection> findByUserIdOrderByFixadoDescDataProjecaoDesc(UUID userId);
 
    long countByUserId(UUID userId);
 }

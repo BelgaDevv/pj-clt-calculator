@@ -1,5 +1,5 @@
 package com.github.belgadevv.pj_clt_calculator.service;
-
+import com.github.belgadevv.pj_clt_calculator.exception.InvalidProjectionException;
 import com.github.belgadevv.pj_clt_calculator.entity.Projection;
 import com.github.belgadevv.pj_clt_calculator.entity.User;
 import com.github.belgadevv.pj_clt_calculator.dto.ProjectionRequestDTO;
@@ -74,7 +74,7 @@ public class ProjectionService {
         projectionRepository.countByUserId(dto.getUserId());
 
 if (totalSimulacoes >= 12) {
-    throw new InvalidSimulationException(
+    throw new InvalidProjectionException(
             "Limite máximo de 12 simulações atingido."
     );
 }
@@ -219,12 +219,45 @@ if (totalSimulacoes >= 12) {
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
         return projectionRepository
-               .findByUserIdOrderByDataProjecaoDesc(userId)
+               .findByUserIdOrderByFixadoDescDataProjecaoDesc(userId)
                 .stream()
                 .map(this::mapearParaDTO)
                 .collect(Collectors.toList());
     }
 
+    
+
+
+public void deletar(UUID id) {
+        if (!projectionRepository.existsById(id)) {
+            throw new RuntimeException("Projection not found!");
+        }
+        projectionRepository.deleteById(id);
+    }
+
+    public void atualizarDescricao(UUID id, String novaDescricao) {
+        Projection projection = projectionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Projection not found!"));
+        projection.setDescricao(novaDescricao);
+        projectionRepository.save(projection);
+    }
+
+public void togglePin(UUID id) {
+    Projection projection = projectionRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Projection not found!"));
+    
+    // Força a inversão exata: se for true vira false, se for false ou nulo vira true
+    boolean novoStatus = (projection.getFixado() != null) ? !projection.getFixado() : true;
+    projection.setFixado(novoStatus);
+    
+    projectionRepository.save(projection);
+}
+
+
+
+
+
+    
     // =========================================================
     // UTIL
     // =========================================================
@@ -274,6 +307,9 @@ if (totalSimulacoes >= 12) {
 
         response.setAporteMensalNecessario(
                 projection.getAporteMensalNecessario()
+        );
+        response.setFixado(
+                projection.getFixado()
         );
 
         return response;

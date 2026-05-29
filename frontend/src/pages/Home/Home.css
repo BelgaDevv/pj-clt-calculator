@@ -1,5 +1,5 @@
 /* =========================================================
-   RESET GLOBAL
+   GLOBAL RESET
 ========================================================= */
 * {
   margin: 0;
@@ -22,7 +22,7 @@ body {
 }
 
 /* =========================================================
-   CONTAINER PRINCIPAL
+   MAIN VIEWPORT CONTAINER
 ========================================================= */
 .dashboard-container {
   display: flex;
@@ -34,38 +34,36 @@ body {
 }
 
 /* =========================================================
-   BOTÃO HAMBÚRGUER
+   HAMBURGER SIDEBAR TOGGLE ACTION
 ========================================================= */
 .btn-toggle-sidebar {
   position: absolute;
   top: 11px;
   left: 16px;
-
   z-index: 110;
-
   background-color: #1e293b;
   border: 1px solid #334155;
-
   width: 38px;
   height: 38px;
-
   border-radius: 6px;
-
   cursor: pointer;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   gap: 4px;
-
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .btn-toggle-sidebar:hover {
   background-color: #334155;
   border-color: #38bdf8;
+  transform: scale(1.05);
+}
+
+.btn-toggle-sidebar:active {
+  transform: scale(0.94);
 }
 
 .hamburger-line {
@@ -82,24 +80,19 @@ body {
 }
 
 /* =========================================================
-   SIDEBAR
+   NAVIGATION SIDEBAR DRAWER
 ========================================================= */
 .sidebar {
   width: 260px;
   min-width: 260px;
   height: 100%;
-
   background-color: #1e293b;
   border-right: 1px solid #334155;
-
   display: flex;
   flex-direction: column;
-
   padding: 70px 8px 20px 8px;
-
   overflow: hidden;
   flex-shrink: 0;
-
   transition:
     width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     min-width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -120,6 +113,7 @@ body {
   font-weight: 700;
 }
 
+/* --- SIDEBAR SCROLL PANEL --- */
 .sidebar-scroll-content {
   flex: 1;
   overflow-y: auto;
@@ -147,40 +141,50 @@ body {
 }
 
 /* =========================================================
-   MENU
+   CORE NAVIGATION INTERFACES
 ========================================================= */
 .menu-item-base {
   background: none;
   border: none;
-
   color: #94a3b8;
-
   padding: 12px 14px;
-
   text-align: left;
-
   font-size: 14px;
   font-weight: 600;
-
   cursor: pointer;
-
   border-radius: 6px;
-
   width: 100%;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   transition: all 0.2s ease;
-
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
 }
 
 .menu-item-base:hover,
 .menu-item-base.active {
   background-color: #0f172a;
   color: #38bdf8;
+}
+
+.menu-item-base::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #38bdf8;
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item-base:hover::before,
+.menu-item-base.active::before {
+  transform: scaleY(1);
 }
 
 .menu-section-dropdown {
@@ -195,18 +199,14 @@ body {
 }
 
 /* =========================================================
-   SUBMENU
+   CHILD NESTED SUBMENUS
 ========================================================= */
 .sub-menu-list {
   display: flex;
   flex-direction: column;
-
   padding-left: 8px;
-
   margin: 4px 0 8px 0;
-
   border-left: 2px solid #334155;
-
   gap: 4px;
 }
 
@@ -214,18 +214,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 8px 10px;
-
   background-color: #0f172a;
-
   border-radius: 4px;
-
   cursor: pointer;
-
   transition: all 0.2s ease;
-
   min-width: 0;
+  will-change: transform;
+}
+
+.sub-item-card:hover {
+  transform: translateX(3px);
 }
 
 .sub-item-card:hover,
@@ -237,11 +236,9 @@ body {
 .item-text-title {
   color: #94a3b8;
   font-size: 13px;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
   flex: 1;
   min-width: 0;
 }
@@ -251,80 +248,41 @@ body {
   color: #38bdf8;
 }
 
-.btn-edit-inline {
-  background: none;
-  border: none;
-
-  cursor: pointer;
-
-  font-size: 11px;
-
-  opacity: 0.4;
-
-  padding-left: 5px;
-
-  transition: opacity 0.2s;
-}
-
-.sub-item-card:hover .btn-edit-inline {
-  opacity: 1;
-}
-
 .input-edicao-sidebar {
   width: 100%;
-
   background-color: #1e293b;
-
   border: 1px solid #38bdf8;
-
   color: #f8fafc;
-
   font-size: 12px;
-
   padding: 2px 6px;
-
   border-radius: 4px;
-
   outline: none;
 }
 
 .txt-vazio {
   padding: 8px;
-
   color: #475569;
-
   font-size: 12px;
-
   font-style: italic;
-
   white-space: nowrap;
 }
 
 /* =========================================================
-   BOTÃO LOGOUT
+   SESSION KILL INTERACTION BUTTON
 ========================================================= */
 .btn-logout {
   background: none;
   border: 1px solid #ef4444;
-
   color: #ef4444;
-
   padding: 10px;
-
   border-radius: 6px;
-
   cursor: pointer;
-
   font-weight: 600;
   font-size: 13px;
-
   margin-top: 15px;
-
   text-align: center;
-
-  transition: all 0.2s;
-
   white-space: nowrap;
+  transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease;
 }
 
 .btn-logout:hover {
@@ -332,33 +290,31 @@ body {
   color: white;
 }
 
+.btn-logout:active {
+  transform: scale(0.97);
+}
+
 /* =========================================================
-   CONTEÚDO PRINCIPAL
+   PRIMARY MAIN WORKING PALETTE CONTENT
 ========================================================= */
 .main-content {
   flex: 1;
   min-width: 0;
-
   display: flex;
   flex-direction: column;
-
   overflow: hidden;
 }
 
 /* =========================================================
-   TOPBAR
+   TOP APPLICATION BAR CONTROL SYSTEM
 ========================================================= */
 .topbar {
   height: 60px;
-
   border-bottom: 1px solid #334155;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   padding: 0 30px 0 75px;
-
   flex-shrink: 0;
 }
 
@@ -372,55 +328,49 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-
   font-size: 13px;
+}
+
+.user-profile:hover .avatar {
+  transform: scale(1.08);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
 .avatar {
   width: 30px;
   height: 30px;
-
   background-color: #334155;
-
   border-radius: 50%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 /* =========================================================
-   CONTENT BODY
+   VIEW CONTENT HOUSING
 ========================================================= */
 .content-body {
   flex: 1;
   min-width: 0;
   min-height: 0;
-
   padding: 24px;
-
   overflow-y: auto;
   overflow-x: hidden;
-
   display: flex;
   flex-direction: column;
 }
 
 /* =========================================================
-   PALCO PRINCIPAL
+   CENTRAL LANDING BOX PLATFORM
 ========================================================= */
 .welcome-stage {
   flex: 1;
-
   min-width: 0;
   min-height: 0;
-
   display: flex;
   flex-direction: column;
-
   background-color: #1e293b;
-
   border: 1px solid #334155;
   border-radius: 8px;
-
   padding: 30px;
-
   overflow: hidden;
 }
 
@@ -437,42 +387,38 @@ body {
 }
 
 /* =========================================================
-   GRID CENTRAL
+   TILED CONTROL SHORTCUT MATRIX
 ========================================================= */
 .shortcut-grid {
   flex: 1;
-
   display: grid;
-
   grid-template-columns: repeat(2, minmax(0, 1fr));
-
   gap: 20px;
-
   min-width: 0;
 }
 
 .shortcut-card {
   min-width: 0;
-
   background-color: #0f172a;
-
   border: 1px solid #334155;
   border-radius: 8px;
-
   padding: 30px;
-
   cursor: pointer;
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  transition: all 0.25s ease;
+  position: relative;
+  will-change: transform;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .shortcut-card:hover {
   border-color: #38bdf8;
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px -12px rgba(56, 189, 248, 0.45);
 }
 
 .shortcut-card h2 {
@@ -492,64 +438,58 @@ body {
   font-weight: 600;
   color: #38bdf8;
   margin-top: 15px;
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shortcut-card:hover .action-tag {
+  transform: translateX(6px);
 }
 
 /* =========================================================
-   RESULTADOS / DETALHES
+   ANALYTICS DETAILED DATA DISPLAYS
 ========================================================= */
 .stage-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
   margin-bottom: 20px;
-
   border-bottom: 1px solid #334155;
-
   padding-bottom: 15px;
 }
 
 .btn-voltar {
   background-color: #334155;
   border: none;
-
   color: white;
-
   padding: 8px 14px;
-
   border-radius: 6px;
-
   font-size: 12px;
   font-weight: 600;
-
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease;
 }
 
 .btn-voltar:hover {
   background-color: #475569;
 }
 
+.btn-voltar:active {
+  transform: scale(0.97);
+}
+
 .placeholder-box {
   flex: 1;
-
   background-color: #0f172a;
-
   border: 1px dashed #334155;
-
   padding: 30px;
-
   border-radius: 6px;
-
   color: #64748b;
-
   font-size: 13.5px;
-
   text-align: center;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   min-width: 0;
 }
 
@@ -567,17 +507,11 @@ body {
 
 .info-row {
   display: grid;
-
   grid-template-columns: repeat(2, minmax(0, 1fr));
-
   gap: 12px;
-
   background-color: #0f172a;
-
   padding: 15px;
-
   border-radius: 6px;
-
   border: 1px solid #334155;
 }
 
@@ -589,25 +523,20 @@ body {
 .badge-tipo {
   background-color: #38bdf8;
   color: #0f172a;
-
   font-size: 10px;
   font-weight: 700;
-
   padding: 2px 6px;
-
   border-radius: 4px;
 }
 
 /* =========================================================
-   SIDEBAR OCULTA
+   COLLAPSED STATE OVERRIDES (SIDEBAR HIDDEN)
 ========================================================= */
 .sidebar-oculta .sidebar {
   width: 0;
   min-width: 0;
-
   padding-left: 0;
   padding-right: 0;
-
   border-right: none;
 }
 
@@ -616,7 +545,7 @@ body {
 }
 
 /* =========================================================
-   ANIMAÇÃO
+   HARDWARE GPU ACCELERATED ENTRY EFFECTS
 ========================================================= */
 .animation-blur-fade {
   animation: blurFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -628,106 +557,42 @@ body {
     filter: blur(5px);
     transform: scale(0.99);
   }
-
   to {
     opacity: 1;
     filter: blur(0px);
     transform: scale(1);
   }
-} /* CORREÇÃO 1: Fechamento adicionado aqui */
+}
 
 /* =========================================================
-   MICRO-INTERAÇÕES (GPU-friendly: transform + opacity)
+   HISTOGRAM GRAPH CONTAINERS
 ========================================================= */
-
-/* Botão hambúrguer com leve pressão */
-.btn-toggle-sidebar { will-change: transform; }
-.btn-toggle-sidebar:hover { transform: scale(1.05); }
-.btn-toggle-sidebar:active { transform: scale(0.94); }
-
-/* Itens do menu lateral: barra de destaque deslizando */
-.menu-item-base { position: relative; overflow: hidden; }
-.menu-item-base::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0; bottom: 0;
-  width: 3px;
-  background: #38bdf8;
-  transform: scaleY(0);
-  transform-origin: center;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.menu-item-base:hover::before,
-.menu-item-base.active::before { transform: scaleY(1); }
-
-/* Sub-itens com slide sutil */
-.sub-item-card { will-change: transform; }
-.sub-item-card:hover { transform: translateX(3px); }
-
-/* Cards de atalho com glow e elevação suave */
-.shortcut-card {
-  position: relative;
-  will-change: transform;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-              border-color 0.25s ease,
-              box-shadow 0.25s ease;
-}
-.shortcut-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px -12px rgba(56, 189, 248, 0.45);
-}
-.shortcut-card .action-tag {
-  display: inline-block;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.shortcut-card:hover .action-tag { transform: translateX(6px); }
-
-/* Botão voltar e logout: pressão tátil */
-.btn-voltar, .btn-logout { transition: background 0.2s ease, transform 0.15s ease, color 0.2s ease; }
-.btn-voltar:active, .btn-logout:active { transform: scale(0.97); }
-
-/* Avatar com leve pulso ao hover na topbar */
-.user-profile:hover .avatar {
-  transform: scale(1.08);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-}
-.avatar { transition: transform 0.25s ease, box-shadow 0.25s ease; }
-
-/* Caixa do gráfico do histórico */
 .historico-chart-box {
   background-color: #1e293b;
   border: 1px solid #334155;
   border-radius: 10px;
   padding: 20px;
 }
-.historico-chart-header { margin-bottom: 12px; }
+
+.historico-chart-header {
+  margin-bottom: 12px;
+}
+
 .historico-chart-header h4 {
   color: #38bdf8;
   font-size: 14px;
   margin-bottom: 4px;
   font-weight: 700;
 }
+
 .historico-chart-sub {
   color: #64748b;
   font-size: 12px;
 }
 
-/* Stagger na entrada das listas */
-.sub-menu-list .sub-item-card {
-  animation: slideInLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-.sub-menu-list .sub-item-card:nth-child(1) { animation-delay: 0.02s; }
-.sub-menu-list .sub-item-card:nth-child(2) { animation-delay: 0.06s; }
-.sub-menu-list .sub-item-card:nth-child(3) { animation-delay: 0.10s; }
-.sub-menu-list .sub-item-card:nth-child(4) { animation-delay: 0.14s; }
-.sub-menu-list .sub-item-card:nth-child(n+5) { animation-delay: 0.18s; }
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-/* Respeita usuários que pedem menos movimento */
+/* =========================================================
+   ACCESSIBILITY HARDWARE CONSTRAINTS (REDUCED MOTION)
+========================================================= */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -736,49 +601,76 @@ body {
 }
 
 /* =========================================================
-   TOAST NOTIFICAÇÃO
+   TOAST NOTIFICATION MODULE
 ========================================================= */
-
 .toast-notificacao {
   position: fixed;
   bottom: 24px;
   right: 24px;
-
   padding: 12px 18px;
   border-radius: 8px;
-
   color: white;
   font-size: 14px;
   font-weight: 600;
-
   z-index: 9999;
-
   animation: fadeInUp 0.25s ease;
 }
 
-/* sucesso */
-.toast-notificacao.sucesso {
-  background-color: #10b981;
-}
-
-/* erro */
-.toast-notificacao.erro {
-  background-color: #ef4444;
-}
-
-/* aviso */
-.toast-notificacao.aviso {
-  background-color: #f59e0b;
-}
+.toast-notificacao.sucesso { background-color: #10b981; }
+.toast-notificacao.erro { background-color: #ef4444; }
+.toast-notificacao.aviso { background-color: #f59e0b; }
 
 @keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* =========================================================
+   SIDEBAR EMBEDDED CONTEXT ACTION CONTROLS
+========================================================= */
+.acoes-item-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-icon-inline {
+  background: transparent;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.55;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.15s ease;
+}
+
+.btn-icon-inline:hover {
+  opacity: 1;
+  background-color: #334155;
+}
+
+.btn-icon-inline:active {
+  transform: scale(0.92);
+}
+
+.btn-icon-inline.danger:hover {
+  background-color: rgba(239, 68, 68, 0.18);
+}
+
+.btn-icon-inline.danger {
+  color: #ef4444;
+
 }

@@ -3,10 +3,14 @@ package com.github.belgadevv.pj_clt_calculator.controller;
 import com.github.belgadevv.pj_clt_calculator.dto.SimulationRequestDTO;
 import com.github.belgadevv.pj_clt_calculator.dto.SimulationResponseDTO;
 import com.github.belgadevv.pj_clt_calculator.service.SimulationService;
+
 import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +31,8 @@ public class SimulationController {
             @RequestBody @Valid SimulationRequestDTO dto
     ) {
 
-        SimulationResponseDTO response = simulationService.calcular(dto);
+        SimulationResponseDTO response =
+                simulationService.calcular(dto);
 
         return ResponseEntity.ok(response);
     }
@@ -40,7 +45,8 @@ public class SimulationController {
             @RequestBody @Valid SimulationRequestDTO dto
     ) {
 
-        SimulationResponseDTO response = simulationService.salvar(dto);
+        SimulationResponseDTO response =
+                simulationService.salvar(dto);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -59,5 +65,43 @@ public class SimulationController {
                 simulationService.buscarHistorico(userId);
 
         return ResponseEntity.ok(historico);
+    }
+
+    // ==========================================
+    // DELETAR SIMULAÇÃO
+    // ==========================================
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(
+            @PathVariable UUID id
+    ) {
+
+        simulationService.deletar(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    // ==========================================
+    // ATUALIZAR DESCRIÇÃO
+    // ==========================================
+   @PutMapping("/{id}")
+public ResponseEntity<Void> atualizarDescricao(
+        @PathVariable UUID id,
+        @RequestBody java.util.Map<String, String> body // Mude para Map
+) {
+    String novaDescricao = body.get("descricao");
+    simulationService.atualizarDescricao(id, novaDescricao);
+    return ResponseEntity.ok().build();
+}
+    // ==========================================
+    // TOGGLE PIN
+    // ==========================================
+    @PatchMapping("/{id}/pin")
+    public ResponseEntity<Void> togglePin(
+            @PathVariable UUID id
+    ) {
+
+        simulationService.togglePin(id);
+
+        return ResponseEntity.ok().build();
     }
 }

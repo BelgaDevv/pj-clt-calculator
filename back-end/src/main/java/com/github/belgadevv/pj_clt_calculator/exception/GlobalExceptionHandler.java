@@ -63,12 +63,14 @@ public class GlobalExceptionHandler {
 
     // 500 - Unexpected errors
 @ExceptionHandler(Exception.class)
-public ResponseEntity handleGenericError(Exception e) {
+public ResponseEntity<String> handleGenericError(Exception e) {
+    // Mantém o log detalhado no console do terminal (Back-end) para você debugar
+    e.printStackTrace();
 
-e.printStackTrace();
-
-return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(e.getMessage());
-
+    // Retorna uma mensagem genérica, porém limpa e amigável para o React
+    String mensagemAmigavel = "Ocorreu um erro interno inesperado no servidor. Por favor, tente novamente mais tarde.";
+    
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(mensagemAmigavel);
 }
 }

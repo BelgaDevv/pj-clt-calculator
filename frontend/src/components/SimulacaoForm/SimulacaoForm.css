@@ -1,4 +1,4 @@
-/* Layout Base do Formulário */
+/* --- SIMULATION CONTAINER LAYOUT --- */
 .simulacao-container {
   width: 100%;
   max-width: 1200px;
@@ -8,7 +8,7 @@
   gap: 20px;
 }
 
-/* CONTAINER DAS ABAS (Igual à imagem modelo) */
+/* --- NAVIGATION TABS --- */
 .direcionamento-abas {
   display: flex;
   width: 100%;
@@ -45,7 +45,7 @@
   margin-top: 2px;
 }
 
-/* Estado Ativo da Aba Selecionada */
+/* --- ACTIVE STATE FOR TABS --- */
 .aba-filtro.ativa {
   background-color: #0f172a;
   border: 1px solid #38bdf8;
@@ -59,7 +59,7 @@
   color: #0ea5e9;
 }
 
-/* Linha de Título e Ação de Salvar */
+/* --- TITLE ROW & SAVE ACTION --- */
 .titulo-salvamento-row {
   display: flex;
   gap: 15px;
@@ -93,7 +93,7 @@
   background-color: #0369a1;
 }
 
-/* Grid das duas caixas (Entrada vs Saída) */
+/* --- OPERATIONAL GRID (INPUT VS OUTPUT) --- */
 .simulacao-grid-operacional {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -101,8 +101,8 @@
   width: 100%;
 }
 
-/* Estilo Comum dos Cards */
-.card-formulario-entradas, 
+/* --- COMMON CARD STRUCTURES --- */
+.card-formulario-entradas,
 .card-painel-resultados {
   background-color: #1e293b;
   border: 1px solid #334155;
@@ -129,7 +129,7 @@
   display: block;
 }
 
-/* Estruturação dos Inputs */
+/* --- INPUT SECTIONS --- */
 .bloco-dinamico-inputs {
   display: flex;
   flex-direction: column;
@@ -147,7 +147,7 @@
   font-size: 0.85rem;
 }
 
-.grupo-input input, 
+.grupo-input input,
 .grupo-input select {
   background-color: #0f172a;
   border: 1px solid #334155;
@@ -171,7 +171,7 @@
   text-align: center;
 }
 
-/* FIX DAS LINHAS DE SAÍDA (Separação Flexbox das pontas) */
+/* --- OUTPUT DISPLAY LINES --- */
 .dados-analise-renderizados {
   display: flex;
   flex-direction: column;
@@ -219,7 +219,7 @@
 .valor-provisao { color: #eab308; }
 .valor-margem { color: #38bdf8; }
 
-/* RECONSTRUÇÃO DO GRÁFICO DE BARRAS VERTICAIS */
+/* --- VERTICAL BAR CHART SECTION --- */
 .mini-grafico-secao {
   margin-top: auto;
   padding-top: 30px;
@@ -249,6 +249,7 @@
 .barra-grafico.provisao { background-color: #eab308; }
 .barra-grafico.margem { background-color: #22c55e; }
 
+/* --- CHART LEGENDS --- */
 .mini-grafico-legendas {
   display: flex;
   justify-content: center;
@@ -269,10 +270,12 @@
   border-radius: 50%;
   display: inline-block;
 }
+
 .dot.imposto { background-color: #ef4444; }
 .dot.provisao { background-color: #eab308; }
 .dot.margem { background-color: #22c55e; }
 
+/* --- ANIMATIONS --- */
 @keyframes growUp {
   from { height: 0; }
 }

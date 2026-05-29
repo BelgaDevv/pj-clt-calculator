@@ -21,6 +21,8 @@ public class SimulationResponseDTO {
     // Simulation path: CLT_PARA_PJ | PJ_PARA_CLT | META_PARA_PJ
     private String direcao;
 
+    private Boolean fixado;
+
     // Chosen tax regime: "MEI" or "ME"
     private String regimePjEscolhido;
 

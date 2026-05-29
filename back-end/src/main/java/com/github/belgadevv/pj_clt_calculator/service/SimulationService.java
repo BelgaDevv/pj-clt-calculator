@@ -383,11 +383,36 @@ if (totalSimulacoes >= 12) {
                 );
 
         return simulationRepository
-               .findByUserIdOrderByDataSimulacaoDesc(userId)
+             .findByUserIdOrderByFixadoDescDataSimulacaoDesc(userId)
                 .stream()
                 .map(this::mapearParaDTO)
                 .collect(Collectors.toList());
     }
+
+    public void deletar(UUID id) {
+        if (!simulationRepository.existsById(id)) {
+            throw new RuntimeException("Simulation not found!");
+        }
+        simulationRepository.deleteById(id);
+    }
+
+    public void atualizarDescricao(UUID id, String novaDescricao) {
+        Simulation simulation = simulationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Simulation not found!"));
+        simulation.setDescricao(novaDescricao);
+        simulationRepository.save(simulation);
+    }
+
+public void togglePin(UUID id) {
+    Simulation simulation = simulationRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Simulation not found!"));
+    
+    // Força a inversão exata: se for true vira false, se for false ou nulo vira true
+    boolean novoStatus = (simulation.getFixado() != null) ? !simulation.getFixado() : true;
+    simulation.setFixado(novoStatus);
+    
+    simulationRepository.save(simulation);
+}
 
     // =========================================================
     // REGIME
@@ -467,6 +492,10 @@ if (totalSimulacoes >= 12) {
 
         response.setMargemDisponivel(
                 simulation.getMargemDisponivel()
+        );
+
+         response.setFixado(
+                simulation.getFixado()
         );
 
         return response;

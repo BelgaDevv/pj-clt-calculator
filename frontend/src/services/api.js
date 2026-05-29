@@ -1,8 +1,8 @@
-// src/services/api.js
-
 const BASE_URL = 'http://localhost:8080/api';
 
-// ── USUÁRIOS ─────────────────────────────────────────────────────────────────
+// =======================================================
+// USER SERVICES
+// =======================================================
 
 export const cadastrarUsuario = async (cpf, senha, confirmacaoSenha) => {
   const response = await fetch(`${BASE_URL}/users/register`, {
@@ -34,13 +34,27 @@ export const loginUsuario = async (cpf, senha) => {
   return response.text();
 };
 
-// ── SIMULAÇÕES ────────────────────────────────────────────────────────────────
-export const criarSimulacao = async (payload) => { const response = await fetch(`${BASE_URL}/simulations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), }); if (!response.ok) { const erro = await response.text(); throw new Error(erro); } return response.json(); };
+// =======================================================
+// SIMULATION SERVICES
+// =======================================================
 
-// Apenas calcula (não salva)
-export const calcularSimulacao = async (payload) => { const response = await fetch(`${BASE_URL}/simulations/calculate`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), }); if (!response.ok) { const erro = await response.text(); throw new Error(erro); } return response.json(); };
+// Calculates only (does not save)
+export const calcularSimulacao = async (payload) => {
+  const response = await fetch(`${BASE_URL}/simulations/calculate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 
-// Salva no histórico
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
+
+  return response.json();
+};
+
+// Saves to history
 export const salvarSimulacao = async (payload) => {
   const response = await fetch(`${BASE_URL}/simulations/save`, {
     method: 'POST',
@@ -66,9 +80,12 @@ export const buscarHistoricoSimulacoes = async (userId) => {
 
   return response.json();
 };
-// ── PROJEÇÕES ─────────────────────────────────────────────────────────────────
 
-// Apenas calcula (não salva)
+// =======================================================
+// PROJECTION SERVICES
+// =======================================================
+
+// Calculates only (does not save)
 export const calcularProjecao = async (payload) => {
   const response = await fetch(`${BASE_URL}/projections/calculate`, {
     method: 'POST',
@@ -84,7 +101,7 @@ export const calcularProjecao = async (payload) => {
   return response.json();
 };
 
-// Salva no histórico
+// Saves to history
 export const salvarProjecao = async (payload) => {
   const response = await fetch(`${BASE_URL}/projections/save`, {
     method: 'POST',
@@ -109,4 +126,86 @@ export const buscarHistoricoProjecoes = async (userId) => {
   }
 
   return response.json();
+};
+
+// =======================================================
+// UPDATE, DELETE AND FEATURE (PIN) SERVICES
+// =======================================================
+
+// FIXED: Returns only true/success because Java responds with 200 without body
+export const atualizarSimulacao = async (id, descricao) => {
+  const response = await fetch(`${BASE_URL}/simulations/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao })
+  });
+
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
+
+  return true;
+};
+
+export const atualizarProjecao = async (id, descricao) => {
+  const response = await fetch(`${BASE_URL}/projections/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descricao })
+  });
+
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
+
+  return true;
+};
+
+// Delete simulation
+export const excluirSimulacao = async (id) => {
+  const response = await fetch(`${BASE_URL}/simulations/${id}`, {
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
+};
+
+// Delete projection
+export const excluirProjecao = async (id) => {
+  const response = await fetch(`${BASE_URL}/projections/${id}`, {
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
+};
+
+// ADDED: Integration calls for Pin with Java
+export const togglePinSimulacao = async (id) => {
+  const response = await fetch(`${BASE_URL}/simulations/${id}/pin`, {
+    method: 'PATCH'
+  });
+
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
+};
+
+export const togglePinProjecao = async (id) => {
+  const response = await fetch(`${BASE_URL}/projections/${id}/pin`, {
+    method: 'PATCH'
+  });
+
+  if (!response.ok) {
+    const erro = await response.text();
+    throw new Error(erro);
+  }
 };

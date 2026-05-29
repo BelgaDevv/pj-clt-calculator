@@ -1,27 +1,44 @@
 import React, { useState, useEffect, useRef } from 'react';
-import SimulacaoForm from '../components/SimulacaoForm';
-import ProjecaoForm from '../components/ProjecaoForm';
-import HistoricoChart from '../components/HistoricoChart';
-import '../styles/Home.css';
+import SimulacaoForm from "../../components/SimulacaoForm/SimulacaoForm.jsx";
+import ProjecaoForm from "../../components/ProjecaoForm/ProjecaoForm.jsx";
+import HistoricoChart from "../../components/HistoricoChart/HistoricoChart.jsx";
+import './Home.css';
+
+import {
+  buscarHistoricoSimulacoes,
+  buscarHistoricoProjecoes,
+  excluirSimulacao,
+  excluirProjecao,
+  atualizarSimulacao,
+  atualizarProjecao,
+  togglePinSimulacao,
+  togglePinProjecao
+} from "../../services/api";
 
 export default function Home({ userId, onLogout }) {
   const timeoutNotificacao = useRef(null);
-  
+
   console.log("USER ID NO PAINEL HOME:", userId);
 
-  // --- ESTADOS DE NAVEGAÇÃO E INTERFACE ---
+  // =======================================================
+  // NAVIGATION AND INTERFACE STATES
+  // =======================================================
   const [painelAtivo, setPainelAtivo] = useState('inicio');
   const [dadosSelecionados, setDadosSelecionados] = useState(null);
   const [historicoSimulacaoAberto, setHistoricoSimulacaoAberto] = useState(false);
   const [historicoProjecaoAberto, setHistoricoProjecaoAberto] = useState(false);
   const [sidebarAberta, setSidebarAberta] = useState(true);
 
-  // --- ESTADOS DE EDIÇÃO E NOTIFICAÇÃO ---
+  // =======================================================
+  // EDITING AND NOTIFICATION STATES
+  // =======================================================
   const [editandoId, setEditandoId] = useState(null);
   const [textoEditado, setTextoEditado] = useState('');
   const [notificacao, setNotificacao] = useState(null);
 
-  // --- ESTADOS DO MOTOR DE CÁLCULO ---
+  // =======================================================
+  // CALCULATION ENGINE STATES
+  // =======================================================
   const [valoresFormulario, setValoresFormulario] = useState({
     salarioBruto: 0,
     beneficios: 0,
@@ -31,11 +48,15 @@ export default function Home({ userId, onLogout }) {
   const [resultadosAPI, setResultadosAPI] = useState(null);
   const [carregandoAPI, setCarregandoAPI] = useState(false);
 
-  // --- LISTAS DE HISTÓRICO (ALIMENTADAS PELO BANCO) ---
+  // =======================================================
+  // HISTORY LISTS (FETCHED FROM DATABASE)
+  // =======================================================
   const [historicoSimulacoes, setHistoricoSimulacoes] = useState([]);
   const [historicoProjecoes, setHistoricoProjecoes] = useState([]);
 
-  // Função disparadora de Toasts elegantes
+  // =======================================================
+  // TOAST / NOTIFICATION DISPATCHER
+  // =======================================================
   const mostrarNotificacao = (mensagem, tipo = 'sucesso') => {
     if (timeoutNotificacao.current) {
       clearTimeout(timeoutNotificacao.current);
@@ -47,45 +68,58 @@ export default function Home({ userId, onLogout }) {
   };
 
   // =======================================================
-  // CARGA INICIAL: CARREGA O HISTÓRICO DO BANCO DE DADOS
+  // INITIAL LOAD: FETCH HISTORY FROM DATABASE
   // =======================================================
   useEffect(() => {
     if (!userId) return;
 
     const carregarHistoricosDoBanco = async () => {
       try {
-        // 1. Histórico de Simulações
-        const resSimulacoes = await fetch(`http://localhost:8080/api/simulations/history/${userId}`);
-        if (resSimulacoes.ok) {
-          const dadosSimu = await resSimulacoes.json();
-          const itensFormatados = dadosSimu.map(item => ({
-            id: item.id ?? crypto.randomUUID(),
-            tipo: 'simulacao',
-            descricao: item.descricao || "Simulação Arquivada",
-            modalidade: item.regimePjEscolhido || 'CLT',
-            valor: new Intl.NumberFormat('pt-BR').format(
-              item.faturamentoBrutoPj || item.salarioDesejadoClt || item.margemDisponivel || 0
-            ),
-            payloadCompleto: item
-          }));
-          setHistoricoSimulacoes(itensFormatados);
-        }
+        // 1. Simulation History
+        const dadosSimu = await buscarHistoricoSimulacoes(userId);
+        const itensFormatados = dadosSimu.map(item => ({
+          id: item.id ?? crypto.randomUUID(),
+          tipo: 'simulacao',
+          descricao: item.descricao || "Simulação Arquivada",
+          modalidade: item.regimePjEscolhido || 'CLT',
+          valor: new Intl.NumberFormat('pt-BR').format(
+            item.faturamentoBrutoPj || item.salarioDesejadoClt || item.margemDisponivel || 0
+          ),
+          payloadCompleto: item,
+          fixado: item.fixado || false,
+          ordem: item.ordem || Date.now()
+        }));
 
-        // 2. Histórico de Projeções
-        const resProjecoes = await fetch(`http://localhost:8080/api/projections/history/${userId}`);
-        if (resProjecoes.ok) {
-          const dadosProj = await resProjecoes.json();
-          const itensFormatadosProj = dadosProj.map(item => ({
-            id: item.id ?? crypto.randomUUID(),
-            tipo: 'projecao',
-            descricao: item.descricao || "Projeção Arquivada",
-            valor: new Intl.NumberFormat('pt-BR').format(
-              item.montanteReal || item.aporteMensalNecessario || 0
-            ),
-            payloadCompleto: item
-          }));
-          setHistoricoProjecoes(itensFormatadosProj);
-        }
+        // Applies initial sorting putting pinned items at the top
+        const listaOrdenadaSimu = itensFormatados.sort((a, b) => {
+          if (a.fixado && !b.fixado) return -1;
+          if (!a.fixado && b.fixado) return 1;
+          return b.ordem - a.ordem;
+        });
+        setHistoricoSimulacoes(listaOrdenadaSimu);
+
+        // 2. Projection History
+        const dadosProj = await buscarHistoricoProjecoes(userId);
+        const itensFormatadosProj = dadosProj.map(item => ({
+          id: item.id ?? crypto.randomUUID(),
+          tipo: 'projecao',
+          descricao: item.descricao || "Projeção Arquivada",
+          valor: new Intl.NumberFormat('pt-BR').format(
+            item.montanteReal || item.aporteMensalNecessario || 0
+          ),
+          payloadCompleto: item,
+          fixado: item.fixado || false,
+          ordem: item.ordem || Date.now()
+        }));
+
+        // Applies initial sorting putting pinned items at the top
+        const listaOrdenadaProj = itensFormatadosProj.sort((a, b) => {
+          if (a.fixado && !b.fixado) return -1;
+          if (!a.fixado && b.fixado) return 1;
+          return b.ordem - a.ordem;
+        });
+        setHistoricoProjecoes(listaOrdenadaProj);
+
       } catch (error) {
         console.error("Erro ao buscar registros iniciais:", error);
       }
@@ -94,15 +128,15 @@ export default function Home({ userId, onLogout }) {
     carregarHistoricosDoBanco();
   }, [userId]);
 
-  // ==========================================
-  // DEBOUNCE DO MOTOR DE CÁLCULO EM TEMPO REAL
-  // ==========================================
+  // =======================================================
+  // DEBOUNCE FOR REAL-TIME CALCULATION ENGINE
+  // =======================================================
   useEffect(() => {
     if (painelAtivo !== 'nova_simulacao' || !userId) return;
 
     const salario = Number(valoresFormulario.salarioBruto) || 0;
     const faturamento = Number(valoresFormulario.faturamentoPJ) || 0;
-    
+
     if (salario <= 0 && faturamento <= 0) {
       setResultadosAPI(null);
       return;
@@ -113,13 +147,13 @@ export default function Home({ userId, onLogout }) {
       try {
         const direcaoCalculo = faturamento > 0 ? "PJ_PARA_CLT" : "CLT_PARA_PJ";
         const corpoFormatadoParaJava = {
-          userId: userId, 
+          userId: userId,
           direcao: direcaoCalculo,
-          regimePjEscolhido: "MEI", 
+          regimePjEscolhido: "MEI",
           salarioDesejadoClt: salario,
           valeAlimentacao: Number(valoresFormulario.beneficios) || 0,
           valeTransporte: 0,
-          proLaborePercentual: 28.0, 
+          proLaborePercentual: 28.0,
           faturamentoBrutoPj: faturamento,
           margemDesejada: 0.0
         };
@@ -136,7 +170,7 @@ export default function Home({ userId, onLogout }) {
         }
 
         const dados = await response.json();
-        setResultadosAPI(dados); 
+        setResultadosAPI(dados);
       } catch (error) {
         console.error("Erro no cálculo automático:", error);
       } finally {
@@ -147,9 +181,9 @@ export default function Home({ userId, onLogout }) {
     return () => clearTimeout(handler);
   }, [valoresFormulario, painelAtivo, userId]);
 
-  // ==========================================
-  // ATUALIZAÇÃO IMEDIATA DO HISTÓRICO (SEM F5)
-  // ==========================================
+  // =======================================================
+  // IMMEDIATE UPDATE OF SIMULATION HISTORY
+  // =======================================================
   const handleSalvarNoHistorico = (novaSimulacao) => {
     if (historicoSimulacoes.length >= 12) {
       mostrarNotificacao('Limite máximo de 12 simulações atingido.', 'erro');
@@ -167,10 +201,11 @@ export default function Home({ userId, onLogout }) {
       descricao: novaSimulacao.descricao || 'Nova Simulação',
       modalidade: novaSimulacao.resultados?.melhorOpcao || 'CLT',
       valor: valorPrincipal,
-      payloadCompleto: novaSimulacao
+      payloadCompleto: novaSimulacao,
+      fixado: false,
+      ordem: Date.now() + Math.random()
     };
 
-    // CORREÇÃO CRÍTICA: Agora adiciona em simulacoes de verdade (no topo da lista)
     setHistoricoSimulacoes(prev => {
       const jaExiste = prev.some(item => item.id === novoItemCard.id);
       if (jaExiste) return prev;
@@ -181,6 +216,71 @@ export default function Home({ userId, onLogout }) {
     mostrarNotificacao('Simulação arquivada com sucesso!');
   };
 
+  // =======================================================
+  // REMOVE RECORD FROM HISTORY
+  // =======================================================
+  const apagarItem = async (e, id, tipo) => {
+    e.stopPropagation();
+
+    try {
+      if (tipo === 'simulacao') {
+        await excluirSimulacao(id);
+        setHistoricoSimulacoes(prev => prev.filter(item => item.id !== id));
+      } else {
+        await excluirProjecao(id);
+        setHistoricoProjecoes(prev => prev.filter(item => item.id !== id));
+      }
+
+      if (dadosSelecionados?.id === id) {
+        setDadosSelecionados(null);
+        setPainelAtivo('inicio');
+      }
+
+      mostrarNotificacao('Item removido.', 'aviso');
+    } catch (error) {
+      console.error(error);
+      mostrarNotificacao('Erro ao excluir.', 'erro');
+    }
+  };
+
+  // =======================================================
+  // TOGGLE PIN STATUS (PIN) WITH REORDERING
+  // =======================================================
+  const toggleFixado = async (e, id, tipo) => {
+    e.stopPropagation();
+
+    const ordenarHistorico = (lista) => {
+      return lista.sort((a, b) => {
+        if (a.fixado && !b.fixado) return -1;
+        if (!a.fixado && b.fixado) return 1;
+        return b.ordem - a.ordem;
+      });
+    };
+
+    try {
+      if (tipo === 'simulacao') {
+        await togglePinSimulacao(id);
+        setHistoricoSimulacoes(prev => {
+          const atualizada = prev.map(item => item.id === id ? { ...item, fixado: !item.fixado } : item);
+          return ordenarHistorico(atualizada);
+        });
+      } else {
+        await togglePinProjecao(id);
+        setHistoricoProjecoes(prev => {
+          const atualizada = prev.map(item => item.id === id ? { ...item, fixado: !item.fixado } : item);
+          return ordenarHistorico(atualizada);
+        });
+      }
+      mostrarNotificacao('Destaque atualizado!');
+    } catch (error) {
+      console.error(error);
+      mostrarNotificacao('Erro ao atualizar destaque.', 'erro');
+    }
+  };
+
+  // =======================================================
+  // IMMEDIATE UPDATE OF PROJECTION HISTORY
+  // =======================================================
   const handleSalvarProjecaoNoHistorico = (novaProjecao) => {
     if (historicoProjecoes.length >= 12) {
       mostrarNotificacao('Limite máximo de 12 projeções atingido.', 'erro');
@@ -194,7 +294,9 @@ export default function Home({ userId, onLogout }) {
       valor: new Intl.NumberFormat('pt-BR').format(
         novaProjecao.montanteReal || novaProjecao.aporteMensalNecessario || 0
       ),
-      payloadCompleto: novaProjecao
+      payloadCompleto: novaProjecao,
+      fixado: false,
+      ordem: Date.now() + Math.random()
     };
 
     setHistoricoProjecoes(prev => {
@@ -210,40 +312,58 @@ export default function Home({ userId, onLogout }) {
     mostrarNotificacao('Projeção arquivada com sucesso!');
   };
 
+  // =======================================================
+  // DETAILS VIEW CONTROL
+  // =======================================================
   const handleVerHistorico = (item) => {
     setDadosSelecionados(item);
     setPainelAtivo('resultado_view');
   };
 
+  // =======================================================
+  // ITEM DESCRIPTION EDIT MANAGEMENT
+  // =======================================================
   const iniciarEdicao = (e, item) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setEditandoId(item.id);
     setTextoEditado(item.descricao);
   };
 
-  const salvarEdicao = (e, id, tipo) => {
+  const salvarEdicao = async (e, id, tipo) => {
     e.stopPropagation();
     if (!textoEditado.trim()) return;
 
-    if (tipo === 'simulacao') {
-      setHistoricoSimulacoes(prev =>
-        prev.map(item => item.id === id ? { ...item, descricao: textoEditado } : item)
-      );
-    } else {
-      setHistoricoProjecoes(prev =>
-        prev.map(item => item.id === id ? { ...item, descricao: textoEditado } : item)
-      );
-    }
+    try {
+      if (tipo === 'simulacao') {
+        await atualizarSimulacao(id, textoEditado);
+        setHistoricoSimulacoes(prev =>
+          prev.map(item => item.id === id ? { ...item, descricao: textoEditado } : item)
+        );
+      } else {
+        await atualizarProjecao(id, textoEditado);
+        setHistoricoProjecoes(prev =>
+          prev.map(item => item.id === id ? { ...item, descricao: textoEditado } : item)
+        );
+      }
 
-    if (dadosSelecionados && dadosSelecionados.id === id) {
-      setDadosSelecionados({ ...dadosSelecionados, descricao: textoEditado });
+      if (dadosSelecionados?.id === id) {
+        setDadosSelecionados(prev => ({ ...prev, descricao: textoEditado }));
+      }
+
+      setEditandoId(null);
+      mostrarNotificacao('Descrição updated.');
+    } catch (error) {
+      console.error(error);
+      mostrarNotificacao('Erro ao atualizar.', 'erro');
     }
-    setEditandoId(null);
   };
 
+  // =======================================================
+  // COMPONENT RENDERING (JSX STRUCTURE)
+  // =======================================================
   return (
     <div className={`dashboard-container ${!sidebarAberta ? 'sidebar-oculta' : ''}`}>
-      
+
       {notificacao && (
         <div className={`toast-notificacao ${notificacao.tipo}`}>
           {notificacao.tipo === 'erro' && '⚠️ '}
@@ -253,7 +373,7 @@ export default function Home({ userId, onLogout }) {
         </div>
       )}
 
-      <button 
+      <button
         className={`btn-toggle-sidebar ${!sidebarAberta ? 'menu-fechado' : ''}`}
         onClick={() => setSidebarAberta(!sidebarAberta)}
         title={sidebarAberta ? "Ocultar Menu" : "Exibir Menu"}
@@ -270,35 +390,37 @@ export default function Home({ userId, onLogout }) {
 
         <div className="sidebar-scroll-content">
           <nav className="sidebar-menu">
-            <button 
+            <button
               className={`menu-item-base ${painelAtivo === 'inicio' ? 'active' : ''}`}
               onClick={() => { setPainelAtivo('inicio'); setDadosSelecionados(null); }}
             >
               Início
             </button>
 
-            {/* DROPDOWN SIMULAÇÕES */}
+            {/* SIMULATIONS DROPDOWN */}
             <div className="menu-section-dropdown">
-              <button 
+              <button
                 className={`menu-item-base ${historicoSimulacaoAberto ? 'expanded' : ''}`}
                 onClick={() => setHistoricoSimulacaoAberto(!historicoSimulacaoAberto)}
               >
                 <span>Simulação</span>
                 <span className="arrow-indicator">{historicoSimulacaoAberto ? '▲' : '▼'}</span>
               </button>
-              
+
               {historicoSimulacaoAberto && (
                 <div className="sub-menu-list">
-                  {historicoSimulacoes.map(item => (
-                    <div 
-                      key={item.id} 
+                  {historicoSimulacoes.map((item) => (
+                    <div
+                      key={item.id}
+                      role="button"
+                      tabIndex={0}
                       className={`sub-item-card ${dadosSelecionados?.id === item.id ? 'selected' : ''}`}
                       onClick={() => handleVerHistorico(item)}
                     >
                       {editandoId === item.id ? (
-                        <input 
-                          type="text" 
-                          value={textoEditado} 
+                        <input
+                          type="text"
+                          value={textoEditado}
                           onChange={(e) => setTextoEditado(e.target.value)}
                           onBlur={(e) => salvarEdicao(e, item.id, 'simulacao')}
                           onKeyDown={(e) => e.key === 'Enter' && salvarEdicao(e, item.id, 'simulacao')}
@@ -308,20 +430,45 @@ export default function Home({ userId, onLogout }) {
                         />
                       ) : (
                         <>
-                          <span className="item-text-title">{item.descricao}</span>
-                          <button className="btn-edit-inline" onClick={(e) => iniciarEdicao(e, item)}>✏️</button>
+                          <span className="item-text-title">
+                            {item.fixado && '📌 '}
+                            {item.descricao}
+                          </span>
+
+                          <div className="acoes-item-sidebar">
+                            <button
+                              className="btn-icon-inline"
+                              onClick={(e) => toggleFixado(e, item.id, 'simulacao')}
+                            >
+                              📌
+                            </button>
+                            <button
+                              className="btn-icon-inline"
+                              onClick={(e) => sidebarAberta && iniciarEdicao(e, item)}
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className="btn-icon-inline danger"
+                              onClick={(e) => apagarItem(e, item.id, 'simulacao')}
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </>
                       )}
                     </div>
                   ))}
-                  {historicoSimulacoes.length === 0 && <span className="txt-vazio">Nenhuma simulação</span>}
+                  {historicoSimulacoes.length === 0 && (
+                    <span className="txt-vazio">Nenhuma simulação</span>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* DROPDOWN PROJEÇÕES */}
+            {/* PROJECTIONS DROPDOWN */}
             <div className="menu-section-dropdown">
-              <button 
+              <button
                 className={`menu-item-base ${historicoProjecaoAberto ? 'expanded' : ''}`}
                 onClick={() => setHistoricoProjecaoAberto(!historicoProjecaoAberto)}
               >
@@ -332,15 +479,17 @@ export default function Home({ userId, onLogout }) {
               {historicoProjecaoAberto && (
                 <div className="sub-menu-list">
                   {historicoProjecoes.map(item => (
-                    <div 
-                      key={item.id} 
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      key={item.id}
                       className={`sub-item-card ${dadosSelecionados?.id === item.id ? 'selected' : ''}`}
                       onClick={() => handleVerHistorico(item)}
                     >
                       {editandoId === item.id ? (
-                        <input 
-                          type="text" 
-                          value={textoEditado} 
+                        <input
+                          type="text"
+                          value={textoEditado}
                           onChange={(e) => setTextoEditado(e.target.value)}
                           onBlur={(e) => salvarEdicao(e, item.id, 'projecao')}
                           onKeyDown={(e) => e.key === 'Enter' && salvarEdicao(e, item.id, 'projecao')}
@@ -350,8 +499,31 @@ export default function Home({ userId, onLogout }) {
                         />
                       ) : (
                         <>
-                          <span className="item-text-title">{item.descricao}</span>
-                          <button className="btn-edit-inline" onClick={(e) => iniciarEdicao(e, item)}>✏️</button>
+                          <span className="item-text-title">
+                            {item.fixado && '📌 '}
+                            {item.descricao}
+                          </span>
+
+                          <div className="acoes-item-sidebar">
+                            <button
+                              className="btn-icon-inline"
+                              onClick={(e) => toggleFixado(e, item.id, 'projecao')}
+                            >
+                              📌
+                            </button>
+                            <button
+                              className="btn-icon-inline"
+                              onClick={(e) => sidebarAberta && iniciarEdicao(e, item)}
+                            >
+                              ✏️
+                            </button>
+                            <button
+                              className="btn-icon-inline danger"
+                              onClick={(e) => apagarItem(e, item.id, 'projecao')}
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </>
                       )}
                     </div>
@@ -370,7 +542,7 @@ export default function Home({ userId, onLogout }) {
         <header className="topbar">
           <h2>Painel de Análise Analítica</h2>
           <div className="user-profile">
-            <strong>Usuário Ativo</strong>
+            <strong>Usuário Active</strong>
             <div className="avatar"></div>
           </div>
         </header>
@@ -380,14 +552,14 @@ export default function Home({ userId, onLogout }) {
             <div className="welcome-stage animation-blur-fade">
               <h1>Plataforma de Planejamento Financeiro</h1>
               <p>Escolha uma ferramenta abaixo ou gerencie seus relatórios salvos no menu lateral.</p>
-              
+
               <div className="shortcut-grid">
                 <div className="shortcut-card" onClick={() => setPainelAtivo('nova_simulacao')}>
                   <h2>Nova Simulação</h2>
                   <p>Calcule e compare propostas de trabalho sob regimes CLT vs PJ com impostos deduzidos.</p>
                   <span className="action-tag">Acessar Ferramenta →</span>
                 </div>
-                
+
                 <div className="shortcut-card" onClick={() => setPainelAtivo('nova_projecao')}>
                   <h2>Nova Projeção</h2>
                   <p>Estime o crescimento real do seu patrimônio aplicando taxas de juros e a inflação oficial.</p>
@@ -398,20 +570,22 @@ export default function Home({ userId, onLogout }) {
           )}
 
           {painelAtivo === 'nova_simulacao' && (
-            <div className={carregandoAPI ? "estado-carregando-suave" : ""}>
+            <>
               {carregandoAPI && <div className="spinner-discreto">Calculando em tempo real no servidor...</div>}
-              <SimulacaoForm 
-                onSalvar={handleSalvarNoHistorico} 
-                onValoresAlterados={setValoresFormulario} 
-                resultadosAPI={resultadosAPI}
-                userId={userId} 
-              />
-            </div>
+              <div className={carregandoAPI ? "estado-carregando-suave" : "simulacao-wrapper-estavel"}>
+                <SimulacaoForm
+                  onSalvar={handleSalvarNoHistorico}
+                  onValoresAlterados={setValoresFormulario}
+                  resultadosAPI={resultadosAPI}
+                  userId={userId}
+                />
+              </div>
+            </>
           )}
 
           {painelAtivo === 'nova_projecao' && (
-            <ProjecaoForm 
-              userId={userId} 
+            <ProjecaoForm
+              userId={userId}
               onSalvar={handleSalvarProjecaoNoHistorico}
             />
           )}
@@ -425,7 +599,7 @@ export default function Home({ userId, onLogout }) {
                 </div>
                 <button className="btn-voltar" onClick={() => { setPainelAtivo('inicio'); setDadosSelecionados(null); }}>Fechar Relatório ×</button>
               </div>
-              
+
               <div className="resultado-detalhado-box">
                 <h3>Resumo Analítico da Consulta</h3>
                 <hr />

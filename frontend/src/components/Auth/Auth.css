@@ -1,17 +1,17 @@
-/* src/styles/Auth.css */
-
+/* --- AUTHENTICATION CONTAINER --- */
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #0f172a; /* Fundo escuro igual ao do projeto */
+  background-color: #0f172a; /* Dark background matching the project theme */
   font-family: 'Inter', sans-serif;
   padding: 20px;
 }
 
+/* --- AUTHENTICATION CARD --- */
 .auth-card {
-  background-color: #1e293b; /* Card um pouco mais claro */
+  background-color: #1e293b; /* Slightly lighter background card */
   border: 1px solid #334155;
   border-radius: 12px;
   padding: 40px;
@@ -21,6 +21,7 @@
   animation: authBlurFade 0.4s ease-out;
 }
 
+/* --- ENTRY ANIMATION --- */
 @keyframes authBlurFade {
   from {
     opacity: 0;
@@ -34,6 +35,7 @@
   }
 }
 
+/* --- HEADER SECTION --- */
 .auth-header {
   text-align: center;
   margin-bottom: 32px;
@@ -47,7 +49,7 @@
 }
 
 .auth-header h1 span {
-  color: #38bdf8; /* Azul Neon do Tema */
+  color: #38bdf8; /* Theme Neon Blue */
 }
 
 .auth-header p {
@@ -55,12 +57,14 @@
   font-size: 0.9rem;
 }
 
+/* --- FORM LAYOUT --- */
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+/* --- FORM GROUP & INPUTS --- */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -93,7 +97,8 @@
   color: #475569;
 }
 
-/* Reutilizando as classes padrões que você já tem no projeto */
+/* --- PRIMARY AUTHENTICATION BUTTON --- */
+/* Reusing standard classes already available in the project */
 .btn-auth {
   width: 100%;
   margin-top: 12px;
@@ -118,6 +123,7 @@
   cursor: not-allowed;
 }
 
+/* --- FOOTER SECTION --- */
 .auth-footer {
   margin-top: 24px;
   text-align: center;
@@ -139,7 +145,8 @@
   color: #7dd3fc;
 }
 
-/* Classe de Erro Inline coerente com o resto do sistema */
+/* --- INLINE ERROR MESSAGE --- */
+/* Inline Error Class consistent with the system design tokens */
 .erro-inline {
   background-color: #450a0a;
   color: #fca5a5;

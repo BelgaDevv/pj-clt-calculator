@@ -1,11 +1,12 @@
-// src/pages/Auth.jsx
 
 import React, { useState } from "react";
-import "../styles/Auth.css";
+import "./Auth.css";
+
 export default function Auth({ onLoginSucesso }) {
-  const [modo, setModo] = useState('login'); 
+  // --- STATE MANAGEMENT ---
+  const [modo, setModo] = useState('login');
   
-  // Estados estritamente alinhados com seu banco de dados: apenas CPF e Senha
+  // States strictly aligned with the database schema: only CPF and Password
   const [cpf, setCpf] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -13,9 +14,10 @@ export default function Auth({ onLoginSucesso }) {
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(false);
 
-  // Aplica a máscara de CPF (000.000.000-00) na tela para o usuário
+  // --- INPUT MASKING ---
+  // Applies the CPF mask (000.000.000-00) on screen for the user UI experience
   const gerenciarMudancaCpf = (e) => {
-    let valor = e.target.value.replace(/\D/g, ''); // Remove letras
+    let valor = e.target.value.replace(/\D/g, ''); // Removes all non-digit characters
     if (valor.length <= 11) {
       valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
       valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
@@ -24,6 +26,8 @@ export default function Auth({ onLoginSucesso }) {
     }
   };
 
+  // --- UI TOGGLE ---
+  // Switches between login and registration views while resetting fields
   const alternarModo = () => {
     setModo(modo === 'login' ? 'cadastro' : 'login');
     setErro(null);
@@ -32,12 +36,15 @@ export default function Auth({ onLoginSucesso }) {
     setConfirmarSenha('');
   };
 
-const handleSubmeter = async (e) => {
+  // --- FORM SUBMISSION ---
+  const handleSubmeter = async (e) => {
     e.preventDefault();
     setErro(null);
 
+    // Strips formatting characters from CPF before validation and API calls
     const cpfLimpo = cpf.replace(/\D/g, '');
 
+    // Form validation rules
     if (!cpfLimpo || !senha) {
       setErro('Por favor, preencha o CPF e a senha.');
       return;
@@ -56,8 +63,9 @@ const handleSubmeter = async (e) => {
     setCarregando(true);
 
     try {
-      const url = modo === 'login' 
-        ? 'http://localhost:8080/api/users/login' 
+      // Setup dynamic endpoints based on the active authentication mode
+      const url = modo === 'login'
+        ? 'http://localhost:8080/api/users/login'
         : 'http://localhost:8080/api/users/register';
 
       const corpoRequisicao = modo === 'login'
@@ -72,41 +80,39 @@ const handleSubmeter = async (e) => {
         body: JSON.stringify(corpoRequisicao),
       });
 
-      // 1. Se o servidor der qualquer erro (400, 401, 500), lemos como texto puro amigável
+      // 1. Error Handling: If the server returns any error status code, parse it as text
       if (!response.ok) {
         const textoErro = await response.text();
         throw new Error(textoErro || `Erro do servidor (${response.status})`);
       }
 
-      // 2. SE FOR MODO LOGIN: Tratamento padrão com o JSON do UserResponseDTO
+      // 2. LOGIN FLOW: Standard handling parsing the UserResponseDTO JSON payload
       if (modo === 'login') {
-      const texto = await response.text();
+        const texto = await response.text();
+        console.log("RESPOSTA BRUTA:", texto);
 
-console.log("RESPOSTA BRUTA:", texto);
-
-const dados = JSON.parse(texto);
+        const dados = JSON.parse(texto);
 
         if (dados && dados.id) {
-onLoginSucesso(dados.id); // Guarda o ID no estado global e vai para a Home
+          onLoginSucesso(dados.id); // Stores the user ID globally and redirects to Home
         } else {
           throw new Error('Resposta de autenticação inválida do servidor.');
         }
-      } 
-      // 3. SE FOR MODO CADASTRO: Blindagem contra texto puro ou objetos híbridos
+      }
+      // 3. REGISTRATION FLOW: Secure parsing supporting plain text or hybrid JSON objects
       else {
-        // Se a rota de registro devolver texto ou objeto, evitamos quebrar
         const respostaCadastro = await response.text();
         
         try {
-          // Tenta ler como JSON se o Java mandou o objeto User
+          // Attempt parsing as JSON if the backend returned the User object entity
           const usuarioObjeto = JSON.parse(respostaCadastro);
           alert('Cadastro realizado com sucesso! Faça login para entrar.');
         } catch {
-          // Se o Java devolveu texto puro (ex: "Usuário cadastrado com sucesso!"), cai aqui
+          // Fallback if the backend returned plain text (e.g., success message string)
           alert('Cadastro realizado com sucesso! Faça login para acessar o sistema.');
         }
         
-        // Joga o usuário automaticamente para a tela de Login limpa para ele entrar
+        // Reset state and direct user automatically to the login view
         setModo('login');
         setSenha('');
         setConfirmarSenha('');
@@ -120,6 +126,7 @@ onLoginSucesso(dados.id); // Guarda o ID no estado global e vai para a Home
     }
   };
 
+  // --- RENDERING UI ---
   return (
     <div className="auth-container">
       <div className="auth-card">
@@ -183,12 +190,12 @@ onLoginSucesso(dados.id); // Guarda o ID no estado global e vai para a Home
         <div className="auth-footer">
           {modo === 'login' ? (
             <>
-              Não tem uma conta? 
+              Não tem uma conta?
               <button type="button" className="auth-toggle-link" onClick={alternarModo}>Cadastre-se</button>
             </>
           ) : (
             <>
-              Já possui uma conta? 
+              Já possui uma conta?
               <button type="button" className="auth-toggle-link" onClick={alternarModo}>Faça Login</button>
             </>
           )}
