@@ -111,3 +111,8 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #111827;
+}

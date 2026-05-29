@@ -21,6 +21,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "nome")
+    private String nome;
+
+    @Column(name = "email")
+    private String email;
+
     // Brazilian Individual Taxpayer Registry ID (CPF)
     @Column(unique = true, nullable = false, length = 11)
     private String cpf;

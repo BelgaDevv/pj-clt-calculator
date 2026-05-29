@@ -11,4 +11,6 @@ public class UserResponseDTO {
 
     private UUID id;
     private String cpf;
+    private String nome;
+    private String email;
 }

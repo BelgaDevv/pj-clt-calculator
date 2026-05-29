@@ -325,23 +325,32 @@ body {
 }
 
 .user-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
+  cursor: pointer;
 }
 
 .user-profile:hover .avatar {
   transform: scale(1.08);
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
-
 .avatar {
-  width: 30px;
-  height: 30px;
-  background-color: #334155;
+  width: 36px;
+  height: 36px;
+
+  background: #0ea5e9;
+
   border-radius: 50%;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+
+  cursor: pointer;
+
+  transition: .2s;
 }
 
 /* =========================================================
@@ -673,4 +682,243 @@ body {
 .btn-icon-inline.danger {
   color: #ef4444;
 
+}
+
+.overlay-usuario {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(4px);
+  z-index: 998;
+}
+
+.painel-usuario {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 380px;
+  height: 100vh;
+
+  background: #111827;
+
+  border-left: 1px solid rgba(255,255,255,.08);
+
+  z-index: 999;
+
+  padding: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  animation: slidePainel .25s ease;
+}
+
+@keyframes slidePainel {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.btn-fechar-painel {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.perfil-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.perfil-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.perfil-info h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #fff;
+  text-align: left;
+}
+
+.user-email {
+  margin-top: 4px;
+  font-size: 13px;
+  color: rgba(255,255,255,.55);
+}
+
+.avatar-grande {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+
+  background: #0ea5e9;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.bloco-config {
+  background: rgba(255,255,255,.03);
+
+  border: 1px solid rgba(255,255,255,.05);
+
+  border-radius: 16px;
+
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bloco-config input {
+  height: 44px;
+
+  border: 1px solid rgba(255,255,255,.08);
+
+  background: #1f2937;
+
+  color: white;
+
+  border-radius: 10px;
+
+  padding: 0 12px;
+}
+
+.item-menu-painel {
+  cursor: pointer;
+
+  padding: 16px;
+
+  border-radius: 12px;
+
+  background: rgba(255,255,255,.03);
+}
+
+.item-menu-painel:hover {
+  background: rgba(255,255,255,.06);
+}
+
+.item-menu-painel.sair {
+  color: #ef4444;
+}
+
+.toggle-theme {
+  width: 100%;
+  height: 46px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #0f172a;
+  color: white;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  font-weight: 600;
+
+  transition: .2s;
+}
+
+.toggle-theme:hover {
+  background: #1e293b;
+}
+
+.btn-salvar-usuario {
+  height: 44px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #0ea5e9;
+  color: white;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-salvar-usuario:hover {
+  background: #0284c7;
+}
+
+
+/* ==========================
+   TEMA ESCURO
+========================== */
+
+body[data-theme="dark"] {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+body[data-theme="dark"] .dashboard-container {
+  background: #0f172a;
+}
+
+/* ==========================
+   TEMA CLARO
+========================== */
+
+body[data-theme="light"] {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+body[data-theme="light"] .dashboard-container {
+  background: #f1f5f9;
+}
+
+body[data-theme="light"] .sidebar {
+  background: #ffffff;
+  border-right: 1px solid #cbd5e1;
+}
+
+body[data-theme="light"] .welcome-stage,
+body[data-theme="light"] .painel-usuario {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body[data-theme="light"] .topbar {
+  background: #ffffff;
+}
+
+body[data-theme="light"] .shortcut-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+}
+
+.user-email {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+}
+
+.user-email:hover {
+  color: rgba(255, 255, 255, 0.8);
 }

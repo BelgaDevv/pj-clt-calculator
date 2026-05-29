@@ -12,13 +12,15 @@ import {
   atualizarSimulacao,
   atualizarProjecao,
   togglePinSimulacao,
-  togglePinProjecao
+  togglePinProjecao,
+  buscarUsuario,
+  atualizarUsuario
 } from "../../services/api";
 
 export default function Home({ userId, onLogout }) {
   const timeoutNotificacao = useRef(null);
 
-  console.log("USER ID NO PAINEL HOME:", userId);
+
 
   // =======================================================
   // NAVIGATION AND INTERFACE STATES
@@ -28,6 +30,13 @@ export default function Home({ userId, onLogout }) {
   const [historicoSimulacaoAberto, setHistoricoSimulacaoAberto] = useState(false);
   const [historicoProjecaoAberto, setHistoricoProjecaoAberto] = useState(false);
   const [sidebarAberta, setSidebarAberta] = useState(true);
+  const [painelUsuarioAberto, setPainelUsuarioAberto] = useState(false);
+const [emailUsuario, setEmailUsuario] = useState("");
+
+
+const [tema, setTema] = useState(
+  localStorage.getItem("tema") || "dark"
+);
 
   // =======================================================
   // EDITING AND NOTIFICATION STATES
@@ -77,6 +86,16 @@ export default function Home({ userId, onLogout }) {
       try {
         // 1. Simulation History
         const dadosSimu = await buscarHistoricoSimulacoes(userId);
+
+        console.table(
+  dadosSimu.map(x => ({
+    id: x.id,
+    descricao: x.descricao,
+    fixado: x.fixado,
+    ordem: x.ordem
+  }))
+);
+
         const itensFormatados = dadosSimu.map(item => ({
           id: item.id ?? crypto.randomUUID(),
           tipo: 'simulacao',
@@ -87,7 +106,7 @@ export default function Home({ userId, onLogout }) {
           ),
           payloadCompleto: item,
           fixado: item.fixado || false,
-          ordem: item.ordem || Date.now()
+         ordem: new Date(item.dataSimulacao).getTime()
         }));
 
         // Applies initial sorting putting pinned items at the top
@@ -109,7 +128,7 @@ export default function Home({ userId, onLogout }) {
           ),
           payloadCompleto: item,
           fixado: item.fixado || false,
-          ordem: item.ordem || Date.now()
+          ordem: new Date(item.dataSimulacao).getTime()
         }));
 
         // Applies initial sorting putting pinned items at the top
@@ -180,6 +199,81 @@ export default function Home({ userId, onLogout }) {
 
     return () => clearTimeout(handler);
   }, [valoresFormulario, painelAtivo, userId]);
+
+// =======================================================
+  //uddate user data on backend
+  // =======================================================
+const [nomeUsuario, setNomeUsuario] = useState("");
+
+
+const carregarUsuario = async () => {
+  try {
+    if (!userId) return;
+
+    const usuario = await buscarUsuario(userId);
+console.log("Usuario recebido:", usuario);
+    setNomeUsuario(usuario.nome || "");
+    setEmailUsuario(usuario.email || "");
+  } catch (erro) {
+    console.error("Erro ao carregar usuário:", erro);
+  }
+};
+
+useEffect(() => {
+  carregarUsuario();
+}, [userId]);
+
+
+const salvarDadosUsuario = async () => {
+  try {
+
+    await atualizarUsuario(userId, {
+      nome: nomeUsuario,
+      email: emailUsuario
+    });
+
+    mostrarNotificacao(
+      "Dados atualizados com sucesso!"
+    );
+
+  } catch {
+
+    mostrarNotificacao(
+      "Erro ao salvar.",
+      "erro"
+    );
+
+  }
+};
+
+ // =======================================================
+  //theme
+  // =======================================================
+
+const alternarTema = () => {
+  const novoTema =
+    tema === "dark"
+      ? "light"
+      : "dark";
+
+  setTema(novoTema);
+
+  localStorage.setItem(
+    "tema",
+    novoTema
+  );
+};
+
+   
+
+
+useEffect(() => {
+  document.body.setAttribute(
+    "data-theme",
+    tema
+  );
+}, [tema]);
+
 
   // =======================================================
   // IMMEDIATE UPDATE OF SIMULATION HISTORY
@@ -535,16 +629,22 @@ export default function Home({ userId, onLogout }) {
           </nav>
         </div>
 
-        <button className="btn-logout" onClick={onLogout}>Sair</button>
+       
       </aside>
 
       <main className="main-content">
         <header className="topbar">
           <h2>Painel de Análise Analítica</h2>
-          <div className="user-profile">
-            <strong>Usuário Active</strong>
-            <div className="avatar"></div>
-          </div>
+    <div
+  className="user-profile"
+  onClick={() => setPainelUsuarioAberto(true)}
+>
+  <div className="avatar">
+    {nomeUsuario
+      ? nomeUsuario.substring(0, 2).toUpperCase()
+      : "GS"}
+  </div>
+</div>
         </header>
 
         <section className="content-body">
@@ -614,6 +714,99 @@ export default function Home({ userId, onLogout }) {
             </div>
           )}
         </section>
+
+        {painelUsuarioAberto && (
+  <>
+    <div
+      className="overlay-usuario"
+      onClick={() => setPainelUsuarioAberto(false)}
+    />
+
+    <aside className="painel-usuario">
+      <button
+        className="btn-fechar-painel"
+        onClick={() => setPainelUsuarioAberto(false)}
+      >
+        ✕
+      </button>
+
+      <div className="perfil-header">
+        <div className="avatar-grande">
+          {nomeUsuario
+            ? nomeUsuario.substring(0, 2).toUpperCase()
+            : "GS"}
+        </div>
+
+<div className="perfil-info">
+  <h3>{nomeUsuario || "Usuário"}</h3>
+
+  <span className="user-email">
+    {emailUsuario || "email@usuario.com"}
+  </span>
+</div>
+      </div>
+
+      <div className="bloco-config">
+        <h4>Aparência</h4>
+
+        <button
+          className="toggle-theme"
+          onClick={alternarTema}
+        >
+          ☀️
+          <span>
+            {tema === "dark"
+              ? "Modo Escuro"
+              : "Modo Claro"}
+          </span>
+        </button>
+      </div>
+
+      <div className="bloco-config">
+        <h4>Dados do usuário</h4>
+
+      
+<input
+  type="text"
+  value={nomeUsuario}
+  onChange={(e) => setNomeUsuario(e.target.value)}
+  placeholder="Nome"
+/>
+
+<input
+  type="email"
+  value={emailUsuario}
+  onChange={(e) => setEmailUsuario(e.target.value)}
+  placeholder="Email"
+/>
+
+
+       <button
+  className="btn-salvar-usuario"
+  onClick={salvarDadosUsuario}
+>
+  Salvar Alterações
+</button>
+      </div>
+
+      <div
+  className="item-menu-painel"
+  onClick={() => setPainelAtivo("ajuda")}
+>
+  <span>❓</span>
+  <span>Ajuda</span>
+</div>
+
+<div
+  className="item-menu-painel sair"
+  onClick={onLogout}
+>
+  <span>🚪</span>
+  <span>Sair</span>
+</div>
+    </aside>
+  </>
+)}
       </main>
     </div>
   );

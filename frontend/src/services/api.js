@@ -3,7 +3,36 @@ const BASE_URL = 'http://localhost:8080/api';
 // =======================================================
 // USER SERVICES
 // =======================================================
+export const buscarUsuario = async (userId) => {
+  const response = await fetch(
+    `http://localhost:8080/api/users/${userId}`
+  );
 
+  if (!response.ok) {
+    throw new Error("Erro ao buscar usuário");
+  }
+
+  return response.json();
+};
+
+export const atualizarUsuario = async (userId, dados) => {
+  const response = await fetch(
+    `http://localhost:8080/api/users/${userId}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dados),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Erro ao atualizar usuário");
+  }
+
+  return response.json();
+};
 export const cadastrarUsuario = async (cpf, senha, confirmacaoSenha) => {
   const response = await fetch(`${BASE_URL}/users/register`, {
     method: 'POST',
