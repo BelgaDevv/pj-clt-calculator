@@ -169,8 +169,8 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
           className={`aba-filtro ${caminhoAtivo === 'pj_to_clt' ? 'ativa' : ''}`}
           onClick={() => setCaminhoAtivo('pj_to_clt')}
         >
-          <span className="aba-titulo">Já sou PJ / Recebi Proposta</span>
-          <span className="aba-subtitulo">(PJ → CLT)</span>
+          <span className="aba-titulo">Simular Contrato PJ</span>
+          <span className="aba-subtitulo">(ANALISE_PJ)</span>
         </button>
         <button
           type="button"
@@ -285,16 +285,17 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
               </select>
             </div>
 
-            {regimePJ === 'ME' && (
-              <div className="grupo-input">
-                <label>Pró-labore % (Estratégia Fator R)</label>
-                <input
-                  type="number"
-                  value={proLaborePct}
-                  onChange={(e) => setProlaborePct(e.target.value)}
-                />
-              </div>
-            )}
+          {/* regimePJ === 'ME' && (
+  <div className="grupo-input">
+    <label>Pró-labore % (Estratégia Fator R)</label>
+    <input
+      type="number"
+      value={proLaborePct}
+      onChange={(e) => setProlaborePct(e.target.value)}
+    />
+  </div>
+)
+*/}
           </fieldset>
 
           <p className="legenda-automaticica">
@@ -311,12 +312,19 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
 
             <div className="bloco-saida-linha principal">
               {/* AJUSTE 2: Condicional para mudar dinamicamente o título principal da caixa de saída se o fluxo for PJ para CLT */}
-              <span className="label-saida">
-                {caminhoAtivo === 'pj_to_clt' ? 'Salário CLT Equivalente' : 'Faturamento Bruto PJ'}
-              </span>
-              <span className="valor-saida destacado">
-                {formatarMoeda(resultados?.faturamentoBrutoPj)}
-              </span>
+            <span className="label-saida">
+  {caminhoAtivo === 'pj_to_clt'
+    ? 'Valor Disponível Após Tributos'
+    : 'Faturamento Bruto PJ'}
+</span>
+
+<span className="valor-saida destacado">
+  {formatarMoeda(
+    caminhoAtivo === 'pj_to_clt'
+      ? resultados?.margemDisponivel
+      : resultados?.faturamentoBrutoPj
+  )}
+</span>
             </div>
             <div className="bloco-saida-linha">
               <span className="label-saida">Imposto Mensal</span>

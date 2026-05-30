@@ -4,6 +4,14 @@ import ProjecaoForm from "../../components/ProjecaoForm/ProjecaoForm.jsx";
 import './Home.css';
 import HistoricoChart from '../../components/HistoricoChart/HistoricoChart.jsx';
 
+import {
+  FaSun,
+  FaMoon,
+  FaTrash,
+  FaThumbtack,
+  FaPen
+} from "react-icons/fa";
+
 
 import {
   buscarHistoricoSimulacoes,
@@ -612,7 +620,7 @@ setHistoricoProjecoes(listaOrdenadaProj);
                               className="btn-icon-inline danger"
                               onClick={(e) => apagarItem(e, item.id, 'projecao')}
                             >
-                              🗑️
+                              
                             </button>
                           </div>
                         </>
