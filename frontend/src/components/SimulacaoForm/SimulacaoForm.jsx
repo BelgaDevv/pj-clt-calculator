@@ -127,7 +127,7 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
 
       onSalvar({
         ...simulacaoSalva,
-        tipo: 'simulacao',
+        type: 'simulacao',
       });
 
       setErro(null);
@@ -160,7 +160,7 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
           className={`aba-filtro ${caminhoAtivo === 'clt_to_pj' ? 'ativa' : ''}`}
           onClick={() => setCaminhoAtivo('clt_to_pj')}
         >
-          <span className="aba-titulo">Qurow migrar para PJ</span>
+          <span className="aba-titulo">Quero migrar para PJ</span>
           <span className="aba-subtitulo">(CLT → PJ)</span>
         </button>
         <button
@@ -263,7 +263,8 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
               <>
                 <span className="subtitulo-caixa">META LÍQUIDA DESEJADA (Entrada)</span>
                 <div className="grupo-input">
-                  <label>Margem Líquida Desejada (R$)</label>
+                  {/* AJUSTE 1: De "Margem Líquida Desejada (R$)" para "Quanto quero ter disponível por mês (R$)" */}
+                  <label>Quanto quero ter disponível por mês (R$)</label>
                   <input
                     type="number"
                     value={metaLiquida}
@@ -296,7 +297,7 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
             )}
           </fieldset>
 
-          <p className="legenda-automatica">
+          <p className="legenda-automaticica">
             *Os resultados são atualizados automaticamente conforme os parâmetros*
           </p>
         </div>
@@ -309,7 +310,10 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
             <span className="subtitulo-caixa">Resultados Analíticos</span>
 
             <div className="bloco-saida-linha principal">
-              <span className="label-saida">Faturamento Bruto PJ</span>
+              {/* AJUSTE 2: Condicional para mudar dinamicamente o título principal da caixa de saída se o fluxo for PJ para CLT */}
+              <span className="label-saida">
+                {caminhoAtivo === 'pj_to_clt' ? 'Salário CLT Equivalente' : 'Faturamento Bruto PJ'}
+              </span>
               <span className="valor-saida destacado">
                 {formatarMoeda(resultados?.faturamentoBrutoPj)}
               </span>
@@ -321,7 +325,8 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
               </span>
             </div>
             <div className="bloco-saida-linha">
-              <span className="label-saida">Provisões CLT Diluídas</span>
+              {/* AJUSTE 3: De "Provisões CLT Diluídas" para "Reservas Mensais (Férias, 13º, FGTS)" */}
+              <span className="label-saida">Reservas Mensais (Férias, 13º, FGTS)</span>
               <span className="valor-saida valor-provisao">
                 {formatarMoeda(resultados?.provisoesSimuladasPj)}
               </span>
@@ -345,7 +350,7 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
                   <div
                     className="barra-grafico provisao"
                     style={{ height: calcularAlturaBarra(resultados?.provisoesSimuladasPj) }}
-                    title={`Provisões: ${formatarMoeda(resultados?.provisoesSimuladasPj)}`}
+                    title={`Reservas: ${formatarMoeda(resultados?.provisoesSimuladasPj)}`}
                   />
                   <div
                     className="barra-grafico margem"
@@ -359,7 +364,8 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
                     <span className="dot imposto"></span> Imposto
                   </div>
                   <div className="legenda-item">
-                    <span className="dot provisao"></span> Provisões
+                    {/* AJUSTE 4: Ajustada legenda do gráfico para coincidir com o novo termo */}
+                    <span className="dot provisao"></span> Reservas Mensais
                   </div>
                   <div className="legenda-item">
                     <span className="dot margem"></span> Margem Líquida
@@ -387,7 +393,7 @@ export default function SimulacaoForm({ onSalvar, dadosCarregados, userId }) {
             cursor: 'pointer',
           }}
         >
-          ← Nova Simulação
+          &larr; Nova Simulação
         </button>
       )}
     </div>

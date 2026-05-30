@@ -3,6 +3,7 @@ package com.github.belgadevv.pj_clt_calculator.dto;
 import lombok.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.List;
 
 @Getter
 @Setter
@@ -31,4 +32,8 @@ public class ProjectionResponseDTO {
     private Double montanteNominal;
     private Double montanteReal;
     private Double aporteMensalNecessario;
+
+    // Historical evolution of the investment's real value over time (for NORMAL flow) or required monthly contribution (for INVERSA flow)
+    private List<EvolucaoPatrimonialDTO> historico;
+
 }

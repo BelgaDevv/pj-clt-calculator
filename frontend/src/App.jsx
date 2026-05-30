@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Auth from "./components/Auth/Auth.jsx";
 import Home from "./pages/Home/Home.jsx";
 import "./App.css";
+import Help from "./pages/Help/Help.jsx";
 
 export default function App() {
   const [telaAtiva, setTelaAtiva] = useState(
@@ -25,16 +26,27 @@ export default function App() {
     setTelaAtiva("home");
   };
 
-  return (
-    <div className="app">
-      {telaAtiva === "auth" ? (
-        <Auth onLoginSucesso={handleLoginSucesso} />
-      ) : (
-        <Home
-          userId={userIdLogado}
-          onLogout={handleLogout}
-        />
-      )}
-    </div>
-  );
+return (
+  <div className="app">
+
+    {telaAtiva === "auth" && (
+      <Auth onLoginSucesso={handleLoginSucesso} />
+    )}
+
+    {telaAtiva === "home" && (
+      <Home
+        userId={userIdLogado}
+        onLogout={handleLogout}
+        abrirAjuda={() => setTelaAtiva("ajuda")}
+      />
+    )}
+
+    {telaAtiva === "ajuda" && (
+      <Help
+        voltar={() => setTelaAtiva("home")}
+      />
+    )}
+
+  </div>
+);
 }

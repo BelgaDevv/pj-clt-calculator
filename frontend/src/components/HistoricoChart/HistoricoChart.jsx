@@ -190,56 +190,58 @@ export default function HistoricoChart({ item }) {
       };
     }
 
-    // =====================================================
+// =====================================================
     // PROJECTION CHART SPECIFICS
     // =====================================================
 
     const p = item.payloadCompleto;
-    const anos = parseAnos(item.tempo);
+
+    console.log("ITEM:", item);
+console.log("PAYLOAD:", p);
+console.log("HISTORICO:", p?.historico);
+    
+    // Fallback inteligente para descobrir o tempo (anos) de onde quer que ele esteja vindo
+    const anos = parseAnos(item.tempo || p?.prazoAnos || Math.ceil((p?.prazoMeses || 120) / 12));
     const meses = anos * 12;
 
     const patrimonioInicial =
-      parseValorBR(p?.patrimonioInicial) ||
+      parseValorBR(p?.patrimonioInicial || p?.capitalInicial) ||
       parseValorBR(item.valor) * 0.05 ||
-      10000;
+      0;
 
+    // Busca o aporte correto dependendo da direção (Direta ou Inversa)
     const aporte =
-      parseValorBR(p?.aporteMensal) ||
+      parseValorBR(p?.aporteMensal || p?.aporteMensalNecessario || p?.aporteMensalInformado) ||
       Math.max(
         500,
         parseValorBR(item.valor) / meses / 2
       );
 
-    const taxaAA = (Number(p?.taxaRentabilidade) || 11.5) / 100;
+    const taxaAA = (String(item.descricao).toLowerCase().includes('inversa') ? 10.0 : (Number(p?.taxaRentabilidade) || 11.5)) / 100;
     const inflacaoAA = (Number(p?.taxaInflacao) || 4.5) / 100;
 
     // Calculates real annual interest rate adjusted for inflation
-    const taxaRealAA = (1 + taxaAA) / (1 + inflacaoAA) - 1;
-    // Compounded monthly real interest rate
-    const taxaRealMM = Math.pow(1 + taxaRealAA, 1 / 12) - 1;
+    
+const historico =
+  item?.payloadCompleto?.historico ??
+  item?.historico ??
+  [];
+  if (historico.length === 0) {
+  console.log('Histórico vazio', item);
+  return null;
+}
+const categorias = historico.map(
+  p => `${(p.mes / 12).toFixed(1)}a`
+);
 
-    const categorias = [];
-    const totalSerie = [];
-    const investidoSerie = [];
+const totalSerie = historico.map(
+  p => p.patrimonioReal
+);
 
-    let total = patrimonioInicial;
-    let investido = patrimonioInicial;
-
-    // Configures data step intervals to optimize rendering performance
-    const step = Math.max(1, Math.floor(meses / 60));
-
-    for (let i = 0; i <= meses; i++) {
-      if (i > 0) {
-        total = total * (1 + taxaRealMM) + aporte;
-        investido += aporte;
-      }
-
-      if (i % step === 0 || i === meses) {
-        categorias.push(`${(i / 12).toFixed(1)}a`);
-        totalSerie.push(Math.round(total));
-        investidoSerie.push(Math.round(investido));
-      }
-    }
+const investidoSerie = historico.map(
+  p => p.totalInvestido
+);
+    
 
     return {
       type: 'area',
@@ -295,21 +297,13 @@ export default function HistoricoChart({ item }) {
           borderColor: COR_GRID,
           strokeDashArray: 4
         },
-        xaxis: {
-          categories: categorias,
-          labels: {
-            style: {
-              colors: COR_TEXTO,
-              fontSize: '11px'
-            }
-          },
-          axisBorder: {
-            color: COR_GRID
-          },
-          axisTicks: {
-            color: COR_GRID
-          }
-        },
+xaxis: {
+  categories: categorias,
+  tickAmount: 10,
+  labels: {
+    hideOverlappingLabels: true
+  }
+},
         yaxis: {
           labels: {
             style: {

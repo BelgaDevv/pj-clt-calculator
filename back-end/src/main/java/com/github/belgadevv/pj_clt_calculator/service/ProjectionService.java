@@ -8,6 +8,8 @@ import com.github.belgadevv.pj_clt_calculator.repository.ProjectionRepository;
 import com.github.belgadevv.pj_clt_calculator.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import com.github.belgadevv.pj_clt_calculator.dto.EvolucaoPatrimonialDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -119,6 +121,8 @@ if (totalSimulacoes >= 12) {
                 dto.getAporteMensal()
                         * (Math.pow(1 + taxaRealMensal, meses) - 1)
                         / taxaRealMensal;
+
+
 
         Projection projection = new Projection();
 
@@ -253,8 +257,47 @@ public void togglePin(UUID id) {
     projectionRepository.save(projection);
 }
 
+// =========================================================
+// HISTÓRICO DETALHADO  (para gráficos)
+private List<EvolucaoPatrimonialDTO> gerarHistorico(Projection projection) {
 
+    List<EvolucaoPatrimonialDTO> historico = new ArrayList<>();
 
+    int meses = projection.getPrazoAnos() * 12;
+
+    double taxaRealAnual =
+            ((1 + 0.10) / (1 + TAXA_INFLACAO_ANUAL)) - 1;
+
+    double taxaRealMensal =
+            Math.pow(1 + taxaRealAnual, 1.0 / 12) - 1;
+
+    double aporte =
+            projection.getDirecao().equals("INVERSA")
+                    ? projection.getAporteMensalNecessario()
+                    : projection.getAporteMensal();
+
+    double patrimonio = 0;
+    double investido = 0;
+
+    for (int mes = 1; mes <= meses; mes++) {
+
+        patrimonio =
+                patrimonio * (1 + taxaRealMensal)
+                        + aporte;
+
+        investido += aporte;
+
+        historico.add(
+                new EvolucaoPatrimonialDTO(
+                        mes,
+                        arredondar(patrimonio),
+                        arredondar(investido)
+                )
+        );
+    }
+
+    return historico;
+}
 
 
     
@@ -312,6 +355,10 @@ public void togglePin(UUID id) {
                 projection.getFixado()
         );
 
+        response.setHistorico(
+                  gerarHistorico(projection)
+        );
+         
         return response;
     }
 }

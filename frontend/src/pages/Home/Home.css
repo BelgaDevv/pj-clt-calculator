@@ -9,10 +9,11 @@
 
 html,
 body,
+
 #root {
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -458,6 +459,9 @@ body {
 /* =========================================================
    ANALYTICS DETAILED DATA DISPLAYS
 ========================================================= */
+
+
+
 .stage-header {
   display: flex;
   justify-content: space-between;
@@ -921,4 +925,97 @@ body[data-theme="light"] .shortcut-card {
 
 .user-email:hover {
   color: rgba(255, 255, 255, 0.8);
+}
+
+.btn-logout-sidebar {
+  width: 100%;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #dc2626
+  );
+
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all .25s ease;
+}
+
+.btn-logout-sidebar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(239,68,68,.35);
+}
+
+.btn-ajuda {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #2563eb;
+  color: white;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.btn-ajuda:hover {
+  transform: translateY(-2px);
+}
+
+.overlay-ajuda {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(4px);
+
+  z-index: 5000;
+}
+
+.modal-ajuda {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 700px;
+  max-width: 90vw;
+
+  padding: 30px;
+
+  border-radius: 16px;
+
+  background: #0f172a;
+  border: 1px solid #334155;
+
+  z-index: 5001;
+}
+
+.btn-fechar-ajuda {
+  position: absolute;
+
+  top: 15px;
+  right: 15px;
+
+  border: none;
+  background: transparent;
+
+  color: white;
+  font-size: 22px;
+
+  cursor: pointer;
 }

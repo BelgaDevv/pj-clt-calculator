@@ -16,7 +16,6 @@ export default function ProjecaoForm({ onSalvar, userId }) {
   const [resultados, setResultados] = useState(null);
 
   // --- AUTOMATIC CALCULATION HOOK ---
-  // Re-runs the financial projection calculation engine every time parameters change
   useEffect(() => {
     const calcularAutomaticamente = async () => {
       try {
@@ -45,7 +44,6 @@ export default function ProjecaoForm({ onSalvar, userId }) {
   }, [caminhoAtivo, aporteMensal, metaPatrimonio, prazoAnos]);
 
   // --- PERSIST DATA ---
-  // Submits the finalized projection payload data structure to backend storage
   const handleSalvar = async () => {
     if (!resultados) {
       setErro('Nenhuma projeção calculada.');
@@ -83,7 +81,6 @@ export default function ProjecaoForm({ onSalvar, userId }) {
     return (valor || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   };
 
-  // --- RENDERING UI ---
   return (
     <div className="projecao-container">
       {/* NAVIGATION TABS */}
@@ -121,7 +118,7 @@ export default function ProjecaoForm({ onSalvar, userId }) {
           className="btn-salvar-projecao"
           disabled={!resultados}
         >
-          💾 Salvar Projeção
+          {carregando ? '⏳ Atualizando...' : '💾 Salvar Projeção'}
         </button>
       </div>
 
@@ -148,7 +145,8 @@ export default function ProjecaoForm({ onSalvar, userId }) {
               </div>
             ) : (
               <div className="grupo-input">
-                <label>Meta de Patrimônio Alvo (R$)</label>
+                {/* ABSTRAÇÃO 1: De "Meta de Patrimônio Alvo" para "Quanto quero ter acumulado" */}
+                <label>Quanto quero ter acumulado (R$)</label>
                 <input
                   type="number"
                   value={metaPatrimonio}
@@ -158,7 +156,7 @@ export default function ProjecaoForm({ onSalvar, userId }) {
             )}
 
             <div className="grupo-input">
-              <label>Horizonte de Tempo (Anos)</label>
+              <label>Prazo (Anos)</label>
               <input
                 type="number"
                 value={prazoAnos}
@@ -177,12 +175,15 @@ export default function ProjecaoForm({ onSalvar, userId }) {
           <div className="secao-form-titulo">Análise de Cenário Real</div>
 
           <div className="dados-analise-renderizados">
-            <span className="subtitulo-caixa">Poder de Compra Calculado</span>
+            <span className="subtitulo-caixa">
+  {caminhoAtivo === 'aporte_to_patrimonio' ? 'Resultado Estimado' : 'Aporte Necessário'}
+</span>
 
             <div className="bloco-saida-linha principal-projecao">
+              {/* ABSTRAÇÃO 2: De "Montante Real Acumulado" para "Poder de compra real" */}
               <span className="label-saida">
                 {caminhoAtivo === 'aporte_to_patrimonio'
-                  ? 'Montante Real Acumulado'
+                  ? 'Poder de Compra Real'
                   : 'Aporte Mensal Necessário'}
               </span>
               <span className="valor-saida destacado-projecao">
@@ -193,9 +194,16 @@ export default function ProjecaoForm({ onSalvar, userId }) {
             </div>
 
             <div className="bloco-saida-linha">
-              <span className="label-saida">Montante Nominal Acumulado</span>
+              {/* ABSTRAÇÃO 3: De "Montante Nominal Acumulado" para "Dinheiro total na conta (Saldo Bruto)" */}
+              <span className="label-saida">
+                {caminhoAtivo === 'aporte_to_patrimonio' 
+                  ? 'Dinheiro total na conta (Saldo Bruto)' 
+                  : 'Meta Alvo Final'}
+              </span>
               <span className="valor-saida valor-investido">
-                {formatarMoeda(resultados?.montanteNominal)}
+                {caminhoAtivo === 'aporte_to_patrimonio'
+                  ? formatarMoeda(resultados?.montanteNominal)
+                  : formatarMoeda(resultados?.metaPatrimonio || resultados?.montanteNominal)}
               </span>
             </div>
 
