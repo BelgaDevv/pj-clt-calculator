@@ -620,7 +620,7 @@ setHistoricoProjecoes(listaOrdenadaProj);
                               className="btn-icon-inline danger"
                               onClick={(e) => apagarItem(e, item.id, 'projecao')}
                             >
-                              
+                              🗑️
                             </button>
                           </div>
                         </>
