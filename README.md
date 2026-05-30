@@ -60,9 +60,9 @@ The vision document covers functional and non-functional requirements, use case 
 - [x] Requirements analysis
 - [x] Domain modeling
 - [x] Database design
-- [ ] Spring Boot API
-- [ ] React frontend
-- [ ] Integration and testing
+- [x] Spring Boot API
+- [x] React frontend
+- [x] Integration and testing
 
 ---
 
