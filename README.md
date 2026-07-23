@@ -2,7 +2,7 @@
 
 A web application that calculates the financial equivalence between CLT (formal employment) and PJ (self-employed contractor) work models in Brazil, including a tax provisioning engine and an investment projection module.
 
-This project was developed as part of the **Requirements Engineering** course at **Universidade Católica do Salvador (UCSAL)**, where the developer received a vision document authored by a classmate and was responsible for analyzing the requirements, refining the scope, and implementing the solution from scratch.
+This project was developed as part of the **Requirements Engineering** course at **Universidade Católica do Salvador (UCSAL)**. Based on a software Vision Document, I was responsible for analyzing the scope, designing the architecture, and building the full-stack application from scratch.
 
 ---
 
@@ -40,16 +40,11 @@ Three tables:
 
 ---
 
-## Academic context
+## 🎓 Academic Context
 
-| Field | Info |
-|---|---|
-| Institution | Universidade Católica do Salvador (UCSAL) |
-| Course | Bacharelado em Engenharia de Software |
-| Subject | Engenharia de Requisitos |
-| Vision document author | Gabriel Sebastião Meneses Sales |
-| Developer | Gabriel Santos dos Santos |
-| Year | 2026 |
+Developed for the *Requirements Engineering* course at **Universidade Católica do Salvador (UCSAL)** (2026).  
+* **Vision Document Author:** [Gabriel Sebastião Meneses Sales](https://github.com/Akilis16)  
+* **System Architecture & Implementation:** [Gabriel Santos](https://github.com/BelgaDevv)
 
 The vision document covers functional and non-functional requirements, use case diagrams, class diagrams, activity diagrams, sequence diagrams, component diagrams, and a C4 model architecture overview. The developer performed requirements analysis, scope refinement, and domain modeling before implementation.
 
@@ -69,9 +64,4 @@ The vision document covers functional and non-functional requirements, use case 
 ## Running locally
 
 > Instructions will be added as the project progresses.
-
----
-
-## License
-
 Academic project — UCSAL 2026.
