@@ -43,7 +43,7 @@ Three tables:
 ## 🎓 Academic Context
 
 Developed for the *Requirements Engineering* course at **Universidade Católica do Salvador (UCSAL)** (2026).  
-* **Vision Document Author:** [Gabriel Sebastião Meneses Sales](https://github.com/Akilis16)  
+* **Vision Document Author:** [Gabriel Sebastião](https://github.com/Akilis16)  
 * **System Architecture & Implementation:** [Gabriel Santos](https://github.com/BelgaDevv)
 
 The vision document covers functional and non-functional requirements, use case diagrams, class diagrams, activity diagrams, sequence diagrams, component diagrams, and a C4 model architecture overview. The developer performed requirements analysis, scope refinement, and domain modeling before implementation.
